@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { UserPlus, Edit, MessageSquare, CreditCard, Search, Shield, MapPin } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 
 const TEXT = {
   pt: {
@@ -129,6 +130,8 @@ export default function ComoFuncionaPage() {
           </div>
         </section>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

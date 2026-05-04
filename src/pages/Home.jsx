@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { LogOut, X } from 'lucide-react'
 import Logo from '../components/Logo'
 import LocationFilter from '../components/LocationFilter'
+import Footer from '../components/Footer'
 
 // Ordem exata da grade 3x3:
 // Linha 1: Serviços | Produtos  | Desapego
@@ -274,13 +275,7 @@ export default function Home() {
 
       </main>
 
-      {/* ── FOOTER ── */}
-      <footer className="text-center text-xs w-full" style={{ backgroundColor: '#111827', color: '#9CA3AF', padding: '24px 16px' }}>
-        <div style={{ marginBottom: '8px' }}>
-          <img src="/images/logomarca.png" alt="BRASILESPANA" style={{ height: '24px', objectFit: 'contain', display: 'inline-block', filter: 'drop-shadow(0px 1px 3px rgba(0,0,0,0.4))' }} />
-        </div>
-        <p>© {new Date().getFullYear()} — {lang === 'pt' ? 'Todos os direitos reservados' : 'Todos los derechos reservados'}</p>
-      </footer>
+      <Footer lang={lang} />
     </div>
   )
 }

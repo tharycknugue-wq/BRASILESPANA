@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Heart, Globe, Users, Target } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 import { TEAM, CONTACT } from '../lib/social'
 
 const TEXT = {
@@ -144,6 +145,8 @@ export default function SobrePage() {
           </a>
         </section>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

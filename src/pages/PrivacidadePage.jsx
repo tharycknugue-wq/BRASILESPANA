@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Shield, Database, UserCheck, Trash2, Mail } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 import { CONTACT } from '../lib/social'
 
 const TEXT = {
@@ -172,6 +173,8 @@ export default function PrivacidadePage() {
           </a>
         </section>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

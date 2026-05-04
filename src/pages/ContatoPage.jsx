@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Mail, Globe, Instagram, Facebook, MessageCircle, Send } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 import { CONTACT, SOCIAL } from '../lib/social'
 import { sanitize, validateEmail } from '../lib/security'
 
@@ -200,6 +201,8 @@ export default function ContatoPage() {
           </form>
         </section>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

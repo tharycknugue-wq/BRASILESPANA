@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FileText, Mail } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 import { CONTACT } from '../lib/social'
 
 const TEXT = {
@@ -148,6 +149,8 @@ export default function TermosPage() {
           </a>
         </section>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

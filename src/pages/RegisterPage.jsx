@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { User, Mail, Lock, Eye, EyeOff, Phone, CheckCircle, XCircle, Check } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 import {
   sanitize,
   validateEmail,
@@ -244,6 +245,8 @@ export default function RegisterPage() {
             </button>
           </div>
         </main>
+
+        <Footer lang={lang} />
       </div>
     )
   }
@@ -419,6 +422,8 @@ export default function RegisterPage() {
           </div>
         </div>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertTriangle, ShieldAlert } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Footer from '../components/Footer'
 import {
   sanitize,
   validateEmail,
@@ -294,6 +295,8 @@ export default function LoginPage() {
           </div>
         </div>
       </main>
+
+      <Footer lang={lang} />
     </div>
   )
 }

@@ -84,13 +84,6 @@ export default function PageHeader({ lang = 'pt', backTo = '/', backLabel }) {
           </div>
         )}
       </div>
-
-      {/* Logo centralizado na área do céu */}
-      <div className="flex-1 flex items-center justify-center py-4">
-        <button onClick={() => navigate('/')} className="select-none">
-          <img src="/images/logomarca.png" alt="BRASILESPANA" style={{ height: '56px', objectFit: 'contain', display: 'block', filter: 'drop-shadow(0px 1px 3px rgba(0,0,0,0.4))' }} />
-        </button>
-      </div>
     </header>
   )
 }
