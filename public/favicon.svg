@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#87CEEB"/>
+  <text x="16" y="22" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="14" text-anchor="middle" fill="#fff">BR</text>
+  <rect y="28" x="0"  width="10.66" height="4" fill="#1A7A2E"/>
+  <rect y="28" x="10.66" width="10.66" height="4" fill="#F5C800"/>
+  <rect y="28" x="21.33" width="10.66" height="4" fill="#CC1714"/>
+</svg>
