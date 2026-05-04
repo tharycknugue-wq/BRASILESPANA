@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Heart, Instagram, Facebook, MessageCircle } from 'lucide-react'
 import { SOCIAL } from '../lib/social'
+import { useLang } from '../lib/lang'
 
 const CATEGORIES = [
   { id: 'servicos',     pt: 'Serviços',     es: 'Servicios' },
@@ -20,7 +21,8 @@ const FOOTER_LINKS = [
   { to: '/termos',        pt: 'Termos de uso', es: 'Términos de uso' },
 ]
 
-export default function Footer({ lang }) {
+export default function Footer() {
+  const { lang } = useLang()
   const t = {
     pt: {
       tagline: 'Conectando brasileiros na Espanha',

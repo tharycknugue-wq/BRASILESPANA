@@ -4,6 +4,7 @@ import { LogOut, X } from 'lucide-react'
 import Logo from '../components/Logo'
 import LocationFilter from '../components/LocationFilter'
 import Footer from '../components/Footer'
+import { useLang } from '../lib/lang'
 
 // Ordem exata da grade 3x3:
 // Linha 1: Serviços | Produtos  | Desapego
@@ -80,7 +81,7 @@ const FLAGS = [
 ]
 
 export default function Home() {
-  const [lang, setLang]       = useState('pt')
+  const { lang, setLang }     = useLang()
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const t = TEXT[lang]

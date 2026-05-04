@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { User, Mail, Lock, Eye, EyeOff, Phone, CheckCircle, XCircle, Check } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
+import { useLang } from '../lib/lang'
 import {
   sanitize,
   validateEmail,
@@ -129,7 +130,7 @@ function Field({ label, icon: Icon, error, touched, valid, children }) {
 }
 
 export default function RegisterPage() {
-  const [lang]              = useState('pt')
+  const { lang }            = useLang()
   const [showPass, setShowPass] = useState(false)
   const [showConf, setShowConf] = useState(false)
   const [loading, setLoading]   = useState(false)

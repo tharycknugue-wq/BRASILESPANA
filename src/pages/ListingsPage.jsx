@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Search, MapPin, Clock, Star, X } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useLang } from '../lib/lang'
 
 const CATEGORY_META = {
   servicos:     { pt: 'Serviços',     es: 'Servicios',     icon: '🔧', color: '#1A7A2E', bg: '#E8F5E9' },
@@ -40,7 +41,7 @@ export default function ListingsPage() {
   const { category } = useParams()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [lang, setLang] = useState('pt')
+  const { lang } = useLang()
   const [search, setSearch] = useState('')
 
   const meta = CATEGORY_META[category] || CATEGORY_META.todos
@@ -78,7 +79,7 @@ export default function ListingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-brand-blue">
-      <Header lang={lang} setLang={setLang} />
+      <Header />
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
         {/* Back + Category Header */}
@@ -188,7 +189,7 @@ export default function ListingsPage() {
         )}
       </main>
 
-      <Footer lang={lang} />
+      <Footer />
     </div>
   )
 }

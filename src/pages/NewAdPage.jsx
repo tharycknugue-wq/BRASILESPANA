@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload, CheckCircle } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useLang } from '../lib/lang'
 
 const CATEGORIES = {
   pt: ['Serviços', 'Produtos', 'Desapego', 'Doação', 'Vagas', 'Voluntariado', 'Promoções'],
@@ -16,7 +17,7 @@ const STEPS = {
 
 export default function NewAdPage() {
   const navigate = useNavigate()
-  const [lang, setLang] = useState('pt')
+  const { lang } = useLang()
   const [step, setStep] = useState(0)
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({
@@ -94,7 +95,7 @@ export default function NewAdPage() {
   if (submitted) {
     return (
       <div className="min-h-screen flex flex-col bg-brand-blue">
-        <Header lang={lang} setLang={setLang} />
+        <Header />
         <main className="flex-1 flex items-center justify-center px-4">
           <div className="text-center max-w-sm">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce"

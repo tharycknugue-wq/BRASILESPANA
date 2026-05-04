@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { CONTACT, SOCIAL } from '../lib/social'
 import { sanitize, validateEmail } from '../lib/security'
+import { useLang } from '../lib/lang'
 
 const TEXT = {
   pt: {
@@ -53,7 +54,7 @@ const TEXT = {
 }
 
 export default function ContatoPage() {
-  const [lang] = useState('pt')
+  const { lang } = useLang()
   const t = TEXT[lang]
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [errors, setErrors] = useState({})

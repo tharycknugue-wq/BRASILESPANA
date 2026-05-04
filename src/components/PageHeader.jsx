@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, X, ArrowLeft } from 'lucide-react'
+import { Menu, X, ArrowLeft, Globe } from 'lucide-react'
+import { useLang } from '../lib/lang'
 
 const NAV_ITEMS = [
   { to: '/',              pt: 'Início',        es: 'Inicio' },
@@ -14,10 +15,11 @@ const NAV = {
   es: { publish: 'Publicar Anuncio' },
 }
 
-export default function PageHeader({ lang = 'pt', backTo = '/', backLabel }) {
+export default function PageHeader({ backTo = '/', backLabel }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const menuRef = useRef(null)
+  const { lang, toggleLang } = useLang()
   const t = NAV[lang]
   const back = backLabel || (lang === 'pt' ? 'Voltar' : 'Volver')
 
@@ -52,15 +54,27 @@ export default function PageHeader({ lang = 'pt', backTo = '/', backLabel }) {
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* Botão Voltar — direita */}
-        <button
-          onClick={() => navigate(backTo)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm
-                     bg-black/20 text-white hover:bg-black/35 transition-all backdrop-blur-sm"
-        >
-          <ArrowLeft size={14} />
-          {back}
-        </button>
+        {/* Direita: toggle de idioma + Voltar */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleLang}
+            title="Trocar idioma / Cambiar idioma"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm
+                       bg-black/20 text-white hover:bg-black/35 transition-all backdrop-blur-sm"
+          >
+            <Globe size={14} />
+            {lang === 'pt' ? '🇧🇷 PT' : '🇪🇸 ES'}
+          </button>
+
+          <button
+            onClick={() => navigate(backTo)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm
+                       bg-black/20 text-white hover:bg-black/35 transition-all backdrop-blur-sm"
+          >
+            <ArrowLeft size={14} />
+            {back}
+          </button>
+        </div>
 
         {/* Dropdown */}
         {menuOpen && (

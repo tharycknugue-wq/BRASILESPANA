@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, X, Globe, Bell, User } from 'lucide-react'
+import { Menu, X, Globe, User } from 'lucide-react'
+import { useLang } from '../lib/lang'
 
-export default function Header({ lang, setLang }) {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const { lang, toggleLang } = useLang()
 
   const t = {
     pt: { login: 'Entrar', publish: 'Publicar Anúncio', home: 'Início', about: 'Sobre', contact: 'Contato' },
@@ -41,7 +43,7 @@ export default function Header({ lang, setLang }) {
         <div className="flex items-center gap-2">
           {/* Language Toggle */}
           <button
-            onClick={() => setLang(lang === 'pt' ? 'es' : 'pt')}
+            onClick={toggleLang}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
             title="Trocar idioma / Cambiar idioma"
           >

@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { UserPlus, Edit, MessageSquare, CreditCard, Search, Shield, MapPin } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
+import { useLang } from '../lib/lang'
 
 const TEXT = {
   pt: {
@@ -48,7 +48,7 @@ const TEXT = {
 }
 
 export default function ComoFuncionaPage() {
-  const [lang] = useState('pt')
+  const { lang } = useLang()
   const navigate = useNavigate()
   const t = TEXT[lang]
 

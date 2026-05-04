@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { Shield, Database, UserCheck, Trash2, Mail } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { CONTACT } from '../lib/social'
+import { useLang } from '../lib/lang'
 
 const TEXT = {
   pt: {
@@ -108,7 +108,7 @@ const TEXT = {
 }
 
 export default function PrivacidadePage() {
-  const [lang] = useState('pt')
+  const { lang } = useLang()
   const t = TEXT[lang]
 
   return (

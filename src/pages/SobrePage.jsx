@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { Heart, Globe, Users, Target } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { TEAM, CONTACT } from '../lib/social'
+import { useLang } from '../lib/lang'
 
 const TEXT = {
   pt: {
@@ -54,7 +54,7 @@ const TEXT = {
 }
 
 export default function SobrePage() {
-  const [lang] = useState('pt')
+  const { lang } = useLang()
   const t = TEXT[lang]
 
   return (

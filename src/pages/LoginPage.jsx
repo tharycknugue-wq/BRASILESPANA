@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertTriangle, ShieldAlert } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
+import { useLang } from '../lib/lang'
 import {
   sanitize,
   validateEmail,
@@ -54,7 +55,7 @@ const TEXT = {
 }
 
 export default function LoginPage() {
-  const [lang]              = useState('pt')
+  const { lang }            = useLang()
   const [showPass, setShowPass] = useState(false)
   const [form, setForm]         = useState({ email: '', password: '' })
   const [errors, setErrors]     = useState({})
