@@ -1,0 +1,34 @@
+# Dependencies
+node_modules
+deps_temp_*
+
+# Build output
+dist
+.vite
+
+# Environment variables
+.env
+.env.local
+.env.production
+*.env
+!.env.example
+
+# Vercel
+.vercel
+
+# IDE / OS
+.claude
+.vscode
+.idea
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Confidential business documents (do not push)
+document.pdf
+*.pdf
