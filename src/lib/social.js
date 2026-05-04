@@ -3,12 +3,12 @@
 
 export const CONTACT = {
   // E-mail público (rodapé, formulário de contato, "Fale com a gente")
-  email:    'contato@conexaobr.com',
+  email:    'contato@plataformaconexaobr.com',
   // E-mail técnico/transacional da plataforma BRASILESPAÑA
   // (autenticação, notificações, password reset, contact form recipient)
-  platform: 'brasilespana@conexaobr.com',
+  platform: 'brasilespana@plataformaconexaobr.com',
   // URL pública da plataforma — subdomínio próprio
-  website:  'https://brasilespana.conexaobr.com',
+  website:  'https://brasilespana.plataformaconexaobr.com',
 }
 
 export const SOCIAL = {
