@@ -2,9 +2,16 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu, X, ArrowLeft } from 'lucide-react'
 
+const NAV_ITEMS = [
+  { to: '/',              pt: 'Início',        es: 'Inicio' },
+  { to: '/sobre',         pt: 'Sobre',         es: 'Sobre nosotros' },
+  { to: '/como-funciona', pt: 'Como funciona', es: 'Cómo funciona' },
+  { to: '/contato',       pt: 'Contato',       es: 'Contacto' },
+]
+
 const NAV = {
-  pt: { nav: ['Início', 'Sobre', 'Como funciona', 'Contato'], publish: 'Publicar Anúncio' },
-  es: { nav: ['Inicio', 'Sobre nosotros', 'Cómo funciona', 'Contacto'], publish: 'Publicar Anuncio' },
+  pt: { publish: 'Publicar Anúncio' },
+  es: { publish: 'Publicar Anuncio' },
 }
 
 export default function PageHeader({ lang = 'pt', backTo = '/', backLabel }) {
@@ -58,13 +65,13 @@ export default function PageHeader({ lang = 'pt', backTo = '/', backLabel }) {
         {/* Dropdown */}
         {menuOpen && (
           <div className="absolute top-16 left-4 w-52 bg-white rounded-2xl shadow-xl z-50 border border-gray-100 overflow-hidden animate-fade-in">
-            {t.nav.map(item => (
+            {NAV_ITEMS.map(item => (
               <button
-                key={item}
-                onClick={() => setMenuOpen(false)}
+                key={item.to}
+                onClick={() => { navigate(item.to); setMenuOpen(false) }}
                 className="w-full text-left px-5 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
               >
-                {item}
+                {item[lang]}
               </button>
             ))}
             <div className="border-t border-gray-100 mx-4" />

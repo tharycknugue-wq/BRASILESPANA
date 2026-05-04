@@ -1,5 +1,24 @@
 import { Link } from 'react-router-dom'
 import { Heart, Instagram, Facebook, MessageCircle } from 'lucide-react'
+import { SOCIAL } from '../lib/social'
+
+const CATEGORIES = [
+  { id: 'servicos',     pt: 'Serviços',     es: 'Servicios' },
+  { id: 'produtos',     pt: 'Produtos',     es: 'Productos' },
+  { id: 'desapego',     pt: 'Desapego',     es: 'Desapego' },
+  { id: 'doacao',       pt: 'Doação',       es: 'Donación' },
+  { id: 'vagas',        pt: 'Vagas',        es: 'Empleo' },
+  { id: 'voluntariado', pt: 'Voluntariado', es: 'Voluntariado' },
+  { id: 'promocoes',    pt: 'Promoções',    es: 'Promociones' },
+]
+
+const FOOTER_LINKS = [
+  { to: '/sobre',         pt: 'Sobre nós',     es: 'Sobre nosotros' },
+  { to: '/como-funciona', pt: 'Como funciona', es: 'Cómo funciona' },
+  { to: '/contato',       pt: 'Contato',       es: 'Contacto' },
+  { to: '/privacidade',   pt: 'Privacidade',   es: 'Privacidad' },
+  { to: '/termos',        pt: 'Termos de uso', es: 'Términos de uso' },
+]
 
 export default function Footer({ lang }) {
   const t = {
@@ -7,27 +26,17 @@ export default function Footer({ lang }) {
       tagline: 'Conectando brasileiros na Espanha',
       categories: 'Categorias',
       links: 'Links',
-      about: 'Sobre nós',
-      contact: 'Contato',
-      privacy: 'Privacidade',
-      terms: 'Termos de uso',
       rights: 'Todos os direitos reservados',
       made: 'Feito com',
       for: 'para brasileiros na Espanha',
-      cats: ['Serviços', 'Produtos', 'Desapego', 'Doação', 'Vagas', 'Voluntariado', 'Promoções'],
     },
     es: {
       tagline: 'Conectando brasileños en España',
       categories: 'Categorías',
       links: 'Enlaces',
-      about: 'Sobre nosotros',
-      contact: 'Contacto',
-      privacy: 'Privacidad',
-      terms: 'Términos de uso',
       rights: 'Todos los derechos reservados',
       made: 'Hecho con',
       for: 'para brasileños en España',
-      cats: ['Servicios', 'Productos', 'Desapego', 'Donación', 'Empleo', 'Voluntariado', 'Promociones'],
     },
   }[lang]
 
@@ -42,15 +51,21 @@ export default function Footer({ lang }) {
             </div>
             <p className="text-sm text-gray-500 mb-4">{t.tagline}</p>
             <div className="flex gap-3">
-              {[Instagram, Facebook, MessageCircle].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-brand-green transition-colors"
-                >
-                  <Icon size={15} />
-                </a>
-              ))}
+              <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer"
+                 aria-label="Instagram"
+                 className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-brand-green transition-colors">
+                <Instagram size={15} />
+              </a>
+              <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer"
+                 aria-label="Facebook"
+                 className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-brand-green transition-colors">
+                <Facebook size={15} />
+              </a>
+              <a href={SOCIAL.whatsapp} target="_blank" rel="noopener noreferrer"
+                 aria-label="WhatsApp"
+                 className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-brand-green transition-colors">
+                <MessageCircle size={15} />
+              </a>
             </div>
           </div>
 
@@ -58,10 +73,10 @@ export default function Footer({ lang }) {
           <div>
             <h4 className="font-semibold text-white text-sm mb-3">{t.categories}</h4>
             <ul className="space-y-2">
-              {t.cats.map((cat) => (
-                <li key={cat}>
-                  <Link to={`/anuncios/${cat.toLowerCase()}`} className="text-sm hover:text-brand-yellow transition-colors">
-                    {cat}
+              {CATEGORIES.map((cat) => (
+                <li key={cat.id}>
+                  <Link to={`/anuncios/${cat.id}`} className="text-sm hover:text-brand-yellow transition-colors">
+                    {cat[lang]}
                   </Link>
                 </li>
               ))}
@@ -72,9 +87,11 @@ export default function Footer({ lang }) {
           <div>
             <h4 className="font-semibold text-white text-sm mb-3">{t.links}</h4>
             <ul className="space-y-2 text-sm">
-              {[t.about, t.contact, t.privacy, t.terms].map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-brand-yellow transition-colors">{link}</a>
+              {FOOTER_LINKS.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="hover:text-brand-yellow transition-colors">
+                    {link[lang]}
+                  </Link>
                 </li>
               ))}
             </ul>
