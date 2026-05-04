@@ -2,7 +2,7 @@
 // Atualize aqui — todos os componentes leem deste arquivo.
 
 export const CONTACT = {
-  email:   'contato@conexaobr.com',
+  email:   'brasilespana@conexaobr.com',
   website: 'https://brasilespana.vercel.app',
 }
 
