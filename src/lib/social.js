@@ -2,8 +2,13 @@
 // Atualize aqui — todos os componentes leem deste arquivo.
 
 export const CONTACT = {
-  email:   'brasilespana@conexaobr.com',
-  website: 'https://brasilespana.vercel.app',
+  // E-mail público (rodapé, formulário de contato, "Fale com a gente")
+  email:    'contato@conexaobr.com',
+  // E-mail técnico/transacional da plataforma BRASILESPAÑA
+  // (autenticação, notificações, password reset, contact form recipient)
+  platform: 'brasilespana@conexaobr.com',
+  // URL pública da plataforma — subdomínio próprio
+  website:  'https://brasilespana.conexaobr.com',
 }
 
 export const SOCIAL = {

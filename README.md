@@ -59,7 +59,7 @@ A aplicação sobe em `http://localhost:5173` (ou na próxima porta livre).
 
 Deploy automático via Vercel a cada push em `main`.
 
-- **Produção**: [brasilespana.vercel.app](https://brasilespana.vercel.app)
+- **Produção**: [brasilespana.conexaobr.com](https://brasilespana.conexaobr.com) *(via Vercel)*
 
 ## Design Lock
 
