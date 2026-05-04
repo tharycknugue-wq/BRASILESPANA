@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Search, MapPin, Clock, Star, X } from 'lucide-react'
 import Header from '../components/Header'
@@ -16,19 +16,28 @@ const CATEGORY_META = {
   todos:        { pt: 'Todos',        es: 'Todos',         icon: '🔍', color: '#424242', bg: '#F5F5F5' },
 }
 
-const MOCK_LISTINGS = Array.from({ length: 12 }, (_, i) => ({
+/* Anúncios mock — bilingual via lang. Cada item tem versão PT e ES. */
+const MOCK_RAW = [
+  { titlePt: 'Eletricista certificado — toda Barcelona',  titleEs: 'Electricista certificado — toda Barcelona',  location: 'Barcelona', pricePt: '€35/h',       priceEs: '€35/h' },
+  { titlePt: 'Aulas de português para espanhóis',         titleEs: 'Clases de portugués para españoles',         location: 'Madrid',    pricePt: '€20/h',       priceEs: '€20/h' },
+  { titlePt: 'Bicicleta elétrica seminova',               titleEs: 'Bicicleta eléctrica seminueva',              location: 'Valencia',  pricePt: '€350',        priceEs: '€350' },
+  { titlePt: 'Doação de roupas infantis tamanho 2-4',     titleEs: 'Donación de ropa infantil talla 2-4',        location: 'Sevilla',   pricePt: 'Grátis',      priceEs: 'Gratis' },
+  { titlePt: 'Vaga: recepcionista bilíngue Madrid',       titleEs: 'Empleo: recepcionista bilingüe Madrid',      location: 'Bilbao',    pricePt: '€1.400/mês',  priceEs: '€1.400/mes' },
+  { titlePt: 'Voluntários para ONG de imigrantes',        titleEs: 'Voluntarios para ONG de inmigrantes',        location: 'Málaga',    pricePt: 'Voluntário',  priceEs: 'Voluntario' },
+  { titlePt: 'Promoção: 30% em aulas de espanhol',        titleEs: 'Promoción: 30% en clases de español',        location: 'Barcelona', pricePt: '€15/aula',    priceEs: '€15/clase' },
+  { titlePt: 'Cuidado de idosos — experiência',           titleEs: 'Cuidado de ancianos — experiencia',          location: 'Madrid',    pricePt: '€18/h',       priceEs: '€18/h' },
+  { titlePt: 'Smartphone Samsung seminovo',               titleEs: 'Smartphone Samsung seminuevo',               location: 'Valencia',  pricePt: '€200',        priceEs: '€200' },
+  { titlePt: 'Limpeza residencial e comercial',           titleEs: 'Limpieza residencial y comercial',           location: 'Sevilla',   pricePt: '€25/h',       priceEs: '€25/h' },
+  { titlePt: 'Mesa de jantar 6 lugares',                  titleEs: 'Mesa de comedor 6 plazas',                   location: 'Bilbao',    pricePt: '€80',         priceEs: '€80' },
+  { titlePt: 'Aulas de reforço — matemática',             titleEs: 'Clases de refuerzo — matemáticas',           location: 'Málaga',    pricePt: '€15/h',       priceEs: '€15/h' },
+]
+
+const buildMockListings = (lang) => MOCK_RAW.map((it, i) => ({
   id: i + 1,
-  title: [
-    'Eletricista certificado — toda Barcelona', 'Aulas de português para espanhóis',
-    'Bicicleta elétrica seminova', 'Doo roupas infantis tamanho 2-4',
-    'Vaga: recepcionista bilíngue Madrid', 'Voluntários para ONG imigrantes',
-    'Promoção: 30% em aulas de espanhol', 'Cuidado de idosos — experiência',
-    'Smartphone Samsung seminovo', 'Limpeza residencial e comercial',
-    'Mesa de jantar 6 lugares', 'Aulas de reforço — matemática',
-  ][i],
-  location: ['Barcelona', 'Madrid', 'Valencia', 'Sevilla', 'Bilbao', 'Málaga'][i % 6],
-  time: `${i + 1}h atrás`,
-  price: ['€35/h', '€20/h', '€350', 'Grátis', '€1.400/mês', 'Voluntário', '€15/aula', '€18/h', '€200', '€25/h', '€80', '€15/h'][i],
+  title: lang === 'pt' ? it.titlePt : it.titleEs,
+  location: it.location,
+  time: lang === 'pt' ? `${i + 1}h atrás` : `hace ${i + 1}h`,
+  price: lang === 'pt' ? it.pricePt : it.priceEs,
   featured: i % 4 === 0,
 }))
 
@@ -46,6 +55,7 @@ export default function ListingsPage() {
 
   const meta = CATEGORY_META[category] || CATEGORY_META.todos
   const catLabel = meta[lang]
+  const MOCK_LISTINGS = useMemo(() => buildMockListings(lang), [lang])
 
   const t = {
     pt: { search: 'Buscar anúncios...', filters: 'Filtros', results: 'resultados', noResults: 'Nenhum anúncio encontrado', publish: 'Publicar nesta categoria', locationFilters: 'Filtros de localização' },

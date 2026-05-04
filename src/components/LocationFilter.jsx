@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, ChevronDown, X, Navigation, Loader, Search, Check } from 'lucide-react'
+import { useLang } from '../lib/lang'
 
 /* ── Mapeamento de nomes PT → ES para lookup na hierarquia ── */
 const COM_PT_TO_ES = {
@@ -159,7 +160,8 @@ const LABELS = {
   },
 }
 
-export default function LocationFilter({ lang }) {
+export default function LocationFilter() {
+  const { lang } = useLang()
   const [selected, setSelected] = useState({
     comunidade: [], provincia: [], municipio: [], bairro: [], barrio: [],
   })
