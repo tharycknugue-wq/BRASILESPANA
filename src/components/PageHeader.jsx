@@ -1,14 +1,11 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Menu, ArrowLeft, Globe } from 'lucide-react'
+import { Menu, Globe } from 'lucide-react'
 import { useLang } from '../lib/lang'
 import SideMenu from './SideMenu'
 
-export default function PageHeader({ backTo = '/', backLabel }) {
+export default function PageHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const navigate = useNavigate()
   const { lang, toggleLang } = useLang()
-  const back = backLabel || (lang === 'pt' ? 'Voltar' : 'Volver')
 
   return (
     <header
@@ -18,7 +15,7 @@ export default function PageHeader({ backTo = '/', backLabel }) {
         backgroundSize:     'contain',
         backgroundPosition: 'center center',
         backgroundRepeat:   'no-repeat',
-        backgroundColor:    '#111827',
+        backgroundColor:    '#87CEEB',
         minHeight:          '120px',
       }}
     >
@@ -33,7 +30,7 @@ export default function PageHeader({ backTo = '/', backLabel }) {
           <Menu size={20} />
         </button>
 
-        {/* Direita: idioma + Voltar */}
+        {/* Direita: idioma */}
         <div className="flex items-center gap-2">
           <button
             onClick={toggleLang}
@@ -43,15 +40,6 @@ export default function PageHeader({ backTo = '/', backLabel }) {
           >
             <Globe size={14} />
             {lang === 'pt' ? '🇧🇷 PT' : '🇪🇸 ES'}
-          </button>
-
-          <button
-            onClick={() => navigate(backTo)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm
-                       bg-black/20 text-white hover:bg-black/35 transition-all backdrop-blur-sm"
-          >
-            <ArrowLeft size={14} />
-            {back}
           </button>
         </div>
       </div>

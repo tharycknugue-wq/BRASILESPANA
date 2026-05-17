@@ -157,8 +157,6 @@ export default function SideMenu({ open, onClose }) {
           </button>
         </div>
 
-        <Group icon={HomeIcon} label={t.home} onPick={go} to="/" />
-
         <Group icon={Info} label={t.about}>
           {t.aboutSub.map(subBtn)}
         </Group>
@@ -218,11 +216,6 @@ export default function SideMenu({ open, onClose }) {
               <button onClick={() => go('/cadastro')}
                 className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
                 <UserPlus size={17} style={{ color: '#1A7A2E' }} /> {t.register}
-              </button>
-              <button onClick={() => go('/novo-anuncio')}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold hover:bg-green-50"
-                style={{ color: '#1A7A2E' }}>
-                <PlusCircle size={17} /> {t.publish}
               </button>
             </>
           )}
