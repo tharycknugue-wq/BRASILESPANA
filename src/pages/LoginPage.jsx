@@ -126,14 +126,14 @@ export default function LoginPage() {
         })
         if (error) throw error
         rateLimiter.reset()
-        navigate('/painel')
+        navigate(form.email.trim().toLowerCase().endsWith('@fundador.com') ? '/fundador' : '/')
         return
       } else {
         // Modo demonstração: entra sem servidor (só para revisar as telas)
         await new Promise(r => setTimeout(r, 500))
         signInDemo({ email: form.email, lang })
         rateLimiter.reset()
-        navigate('/painel')
+        navigate(form.email.trim().toLowerCase().endsWith('@fundador.com') ? '/fundador' : '/')
         return
       }
 
@@ -165,13 +165,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
       <PageHeader lang={lang} backTo="/" />
-
-      {/* Faixa tricolor */}
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
 
       {/* CSRF token oculto — referência para backend */}
       <input type="hidden" name="_csrf" value={csrfToken} readOnly />

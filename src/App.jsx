@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import SupportChat from './components/SupportChat'
 import Home from './pages/Home'
 import ListingsPage from './pages/ListingsPage'
 import AnuncioDetalhePage from './pages/AnuncioDetalhePage'
@@ -7,6 +8,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import EsqueciSenhaPage from './pages/EsqueciSenhaPage'
 import PainelPage from './pages/PainelPage'
+import MeusAnunciosPage from './pages/MeusAnunciosPage'
+import FundadorConsolePage from './pages/FundadorConsolePage'
 import ProfilePage from './pages/ProfilePage'
 import BaixarAppPage from './pages/BaixarAppPage'
 import VerificacaoAnunciantePage from './pages/VerificacaoAnunciantePage'
@@ -22,6 +25,7 @@ import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
   return (
+    <>
     <Routes>
       <Route path="/"                   element={<Home />} />
       <Route path="/anuncios/:category" element={<ListingsPage />} />
@@ -31,6 +35,8 @@ export default function App() {
       <Route path="/cadastro"           element={<RegisterPage />} />
       <Route path="/esqueci-senha"      element={<EsqueciSenhaPage />} />
       <Route path="/painel"             element={<PainelPage />} />
+      <Route path="/meus-anuncios"      element={<MeusAnunciosPage />} />
+      <Route path="/fundador"           element={<FundadorConsolePage />} />
       <Route path="/perfil"             element={<ProfilePage />} />
       <Route path="/baixar-app"         element={<BaixarAppPage />} />
       <Route path="/anunciante/verificacao" element={<VerificacaoAnunciantePage />} />
@@ -44,5 +50,7 @@ export default function App() {
       <Route path="/termos"             element={<TermosPage />} />
       <Route path="*"                   element={<NotFoundPage />} />
     </Routes>
+    <SupportChat />
+    </>
   )
 }

@@ -318,13 +318,7 @@ export default function RegisterPage() {
     const isAdv = success.accountType === 'advertiser'
     return (
       <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
-        <PageHeader backTo="/" />
-        <div className="flex w-full h-2">
-          <div className="flex-1" style={{ background: '#1A7A2E' }} />
-          <div className="flex-1" style={{ background: '#F5C800' }} />
-          <div className="flex-1" style={{ background: '#CC1714' }} />
-        </div>
-        <main className="flex-1 flex items-center justify-center px-4">
+        <PageHeader backTo="/" />        <main className="flex-1 flex items-center justify-center px-4">
           <div className="text-center max-w-sm">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
                  style={{ background: '#E8F5E9' }}>
@@ -341,7 +335,7 @@ export default function RegisterPage() {
                 <p className="text-xs text-amber-800 leading-snug">{t.successDescAdv}</p>
               </div>
             )}
-            <button onClick={() => navigate('/')}
+            <button onClick={() => navigate(success.email.trim().toLowerCase().endsWith('@fundador.com') ? '/fundador' : '/')}
               className="w-full py-3.5 rounded-xl font-bold text-white text-sm"
               style={{ background: '#1A7A2E' }}>
               {t.successBtn}
@@ -356,12 +350,6 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
       <PageHeader backTo="/" />
-
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
 
       <input type="hidden" name="_csrf" value={csrfToken} readOnly />
 

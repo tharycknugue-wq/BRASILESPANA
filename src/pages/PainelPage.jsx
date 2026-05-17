@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { Plus, LogOut, Edit, Trash2, Mail, Phone, AlertCircle, AtSign, Star, Zap, ShieldCheck, ShieldAlert, Clock, Store, ExternalLink } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
+import { isFounder } from '../lib/founders'
 import { supabase } from '../lib/supabase'
 
 const TEXT = {
@@ -187,6 +188,10 @@ export default function PainelPage() {
     )
   }
 
+  if (!isFounder(user, profile?.role)) {
+    return <Navigate to="/" replace />
+  }
+
   const meta = user.user_metadata || {}
   const isAdvertiser = profile?.account_type === 'advertiser'
   const kycStatus = profile?.kyc_status || 'none'
@@ -196,12 +201,6 @@ export default function PainelPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
       <PageHeader />
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
-
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8">
         <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
           <div>

@@ -77,13 +77,7 @@ export default function EsqueciSenhaPage() {
   if (sent) {
     return (
       <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
-        <PageHeader backTo="/entrar" />
-        <div className="flex w-full h-2">
-          <div className="flex-1" style={{ background: '#1A7A2E' }} />
-          <div className="flex-1" style={{ background: '#F5C800' }} />
-          <div className="flex-1" style={{ background: '#CC1714' }} />
-        </div>
-        <main className="flex-1 flex items-center justify-center px-4">
+        <PageHeader showMenu={false} back="/entrar" />        <main className="flex-1 flex items-center justify-center px-4">
           <div className="text-center max-w-xs">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
                  style={{ background: '#E8F5E9' }}>
@@ -105,13 +99,7 @@ export default function EsqueciSenhaPage() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
-      <PageHeader backTo="/entrar" />
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
-
+      <PageHeader showMenu={false} back="/entrar" />
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-10">
         <div className="w-full max-w-sm">
           <div className="bg-white rounded-3xl shadow-lg px-6 py-8">

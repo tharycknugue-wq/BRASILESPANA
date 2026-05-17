@@ -132,12 +132,6 @@ export default function BaixarAppPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
       <PageHeader backTo="/" />
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
-
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-8">

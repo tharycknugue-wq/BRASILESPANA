@@ -7,6 +7,7 @@ import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { sanitize } from '../lib/security'
+import { addAd } from '../lib/moderation'
 
 const CATEGORY_ID = {
   'Serviços': 'servicos', 'Servicios': 'servicos',
@@ -62,7 +63,11 @@ export default function NewAdPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { navigate('/entrar'); return }
-    if (!supabase) return
+    if (!supabase) {
+      // Modo demo: diferencia pelo tipo de conta do cadastro
+      if (user.user_metadata?.account_type !== 'advertiser') navigate('/assinatura')
+      return
+    }
     let cancelled = false
     supabase.from('profiles').select('account_type,kyc_status').eq('id', user.id).maybeSingle()
       .then(({ data }) => {
@@ -152,7 +157,20 @@ export default function NewAdPage() {
         })
         if (error) throw error
       } else {
-        await new Promise(r => setTimeout(r, 600))
+        await new Promise(r => setTimeout(r, 400))
+        addAd({
+          ownerEmail:  user.email,
+          ownerName:   user.user_metadata?.full_name || user.email,
+          category:    CATEGORY_ID[form.category] || form.category,
+          title:       form.title,
+          description: form.description,
+          price:       form.price || '',
+          contact:     form.contact,
+          comunidade:  form.location,
+          provincia:   form.province || '',
+          municipio:   form.city,
+          promo:       !!form.promo,
+        })
       }
       setSubmitted(true)
     } catch (err) {

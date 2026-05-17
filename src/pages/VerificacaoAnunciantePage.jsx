@@ -293,13 +293,7 @@ export default function VerificacaoAnunciantePage() {
   /* ── Gates ── */
   const Shell = ({ children }) => (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
-      <PageHeader backTo="/painel" />
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
-      {children}
+      <PageHeader backTo="/painel" />      {children}
       <Footer />
     </div>
   )

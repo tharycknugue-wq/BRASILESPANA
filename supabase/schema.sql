@@ -32,6 +32,11 @@ create table if not exists public.profiles (
 );
 create index if not exists profiles_username_idx on public.profiles(username);
 create index if not exists profiles_kyc_idx      on public.profiles(kyc_status);
+-- Conta de FUNDADOR — destrava "Meu painel" e "Convide com link".
+-- A lista oficial de fundadores fica em src/lib/founders.js (por e-mail).
+-- Para promover alguém pelo banco:  update public.profiles set role = 'founder' where username = 'usuario';
+-- Para rebaixar:                     update public.profiles set role = 'user'    where username = 'usuario';
+alter table public.profiles add column if not exists role text not null default 'user';
 alter table public.profiles enable row level security;
 
 drop policy if exists "profiles: owner read"   on public.profiles;
@@ -238,6 +243,7 @@ alter table public.advertiser_profiles add column if not exists card_phone     t
 alter table public.advertiser_profiles add column if not exists card_email     text;
 alter table public.advertiser_profiles add column if not exists card_instagram text;
 alter table public.advertiser_profiles add column if not exists card_facebook  text;
+alter table public.advertiser_profiles add column if not exists location       text;
 alter table public.advertiser_profiles enable row level security;
 
 drop policy if exists "adv_profiles: public read"  on public.advertiser_profiles;
@@ -371,3 +377,48 @@ create policy "ads bucket: owner upload" on storage.objects for insert
   with check (bucket_id = 'ads' and auth.uid() is not null);
 create policy "ads bucket: owner delete" on storage.objects for delete
   using (bucket_id = 'ads' and auth.uid()::text = (storage.foldername(name))[1]);
+
+-- ──────────────────────────────────────────────────────────
+-- SEGMENTOS + MODERAÇÃO + SUPORTE/CHAT (scaffold p/ produção)
+-- No demo isto roda em localStorage; abaixo o equivalente no
+-- Supabase para quando o backend for conectado.
+-- ──────────────────────────────────────────────────────────
+
+-- Moderação dos anúncios (pré-checagem + regra 24h)
+alter table public.ads add column if not exists flags        text[] default '{}';
+alter table public.ads add column if not exists moderated_by  text;
+alter table public.ads add column if not exists moderated_at  timestamptz;
+alter table public.ads add column if not exists reject_reason text;
+-- status: 'pending' (até 24h / em fila), 'approved', 'rejected'
+
+-- Suporte: threads usuário ↔ fundadores, com triagem por palavra-chave
+create table if not exists public.support_threads (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users(id) on delete cascade,
+  user_email  text,
+  user_name   text,
+  category    text,                       -- 'Sistema & Bugs' | 'Reclamações & Avaliações' | 'Pagamentos & Cobranças' | 'Geral'
+  assigned_to text,                        -- 'tharyck' | 'michele' | 'thayza' | 'geral'
+  status      text not null default 'open',
+  created_at  timestamptz default now()
+);
+create table if not exists public.support_messages (
+  id         uuid primary key default gen_random_uuid(),
+  thread_id  uuid references public.support_threads(id) on delete cascade,
+  sender     text not null,               -- 'user' | 'ai' | 'founder'
+  founder_key text,
+  body       text not null,
+  created_at timestamptz default now()
+);
+alter table public.support_threads  enable row level security;
+alter table public.support_messages enable row level security;
+
+-- Chat EXCLUSIVO dos fundadores
+create table if not exists public.founder_chat (
+  id          uuid primary key default gen_random_uuid(),
+  founder_key text not null,
+  founder_name text,
+  body        text not null,
+  created_at  timestamptz default now()
+);
+alter table public.founder_chat enable row level security;

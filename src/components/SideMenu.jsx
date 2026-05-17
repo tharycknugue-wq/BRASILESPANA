@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  X, ChevronDown, Home as HomeIcon, Info, PlayCircle, MessageSquare,
-  Share2, FileText, LogIn, UserPlus, LayoutDashboard, PlusCircle, LogOut,
+  X, ChevronDown, Info, PlayCircle, MessageSquare,
+  Share2, FileText, LayoutDashboard, Megaphone, LogOut,
   Instagram, Facebook, Music2, Youtube, MessageCircle, Send, UserCircle, Download,
 } from 'lucide-react'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
+import { isFounder } from '../lib/founders'
 import { SOCIAL } from '../lib/social'
 
 const T = {
@@ -35,9 +36,10 @@ const T = {
     terms: 'Termos de Uso',
     login: 'Entrar',
     register: 'Criar conta',
-    panel: 'Meu painel',
+    panel: 'Console de Fundador',
     profile: 'Meu perfil',
     publish: 'Publicar Anúncio',
+    myAds: 'Meus anúncios',
     signout: 'Sair',
   },
   es: {
@@ -65,9 +67,10 @@ const T = {
     terms: 'Términos de Uso',
     login: 'Entrar',
     register: 'Crear cuenta',
-    panel: 'Mi panel',
+    panel: 'Consola de Fundador',
     profile: 'Mi perfil',
     publish: 'Publicar Anuncio',
+    myAds: 'Mis anuncios',
     signout: 'Salir',
   },
 }
@@ -109,6 +112,8 @@ export default function SideMenu({ open, onClose }) {
   const navigate = useNavigate()
   const { lang } = useLang()
   const { user, signOut } = useAuth()
+  const founder = isFounder(user)
+  const isAdvertiser = user?.user_metadata?.account_type === 'advertiser'
   const t = T[lang]
 
   useEffect(() => {
@@ -185,41 +190,32 @@ export default function SideMenu({ open, onClose }) {
 
         <Group icon={FileText} label={t.terms} onPick={go} to="/termos" />
 
-        {/* Ações de conta */}
-        <div className="mt-auto border-t border-gray-100 py-2">
-          {user ? (
-            <>
-              <button onClick={() => go('/perfil')}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
-                <UserCircle size={17} style={{ color: '#1A7A2E' }} /> {t.profile}
-              </button>
-              <button onClick={() => go('/painel')}
+        {/* Ações de conta — apenas para quem está logado */}
+        {user && (
+          <div className="mt-auto border-t border-gray-100 py-2">
+            <button onClick={() => go('/perfil')}
+              className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
+              <UserCircle size={17} style={{ color: '#1A7A2E' }} /> {t.profile}
+            </button>
+            {founder && (
+              <button onClick={() => go('/fundador')}
                 className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
                 <LayoutDashboard size={17} style={{ color: '#1A7A2E' }} /> {t.panel}
               </button>
-              <button onClick={() => go('/novo-anuncio')}
+            )}
+            {isAdvertiser && (
+              <button onClick={() => go('/meus-anuncios')}
                 className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold hover:bg-green-50"
                 style={{ color: '#1A7A2E' }}>
-                <PlusCircle size={17} /> {t.publish}
+                <Megaphone size={17} /> {t.myAds}
               </button>
-              <button onClick={handleSignOut}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50">
-                <LogOut size={17} /> {t.signout}
-              </button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => go('/entrar')}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
-                <LogIn size={17} style={{ color: '#1A7A2E' }} /> {t.login}
-              </button>
-              <button onClick={() => go('/cadastro')}
-                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
-                <UserPlus size={17} style={{ color: '#1A7A2E' }} /> {t.register}
-              </button>
-            </>
-          )}
-        </div>
+            )}
+            <button onClick={handleSignOut}
+              className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50">
+              <LogOut size={17} /> {t.signout}
+            </button>
+          </div>
+        )}
       </nav>
     </div>
   )

@@ -1,22 +1,25 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, Menu as MenuIcon, Instagram } from 'lucide-react'
+import { Menu as MenuIcon, Instagram } from 'lucide-react'
 import LocationFilter from '../components/LocationFilter'
 import Footer from '../components/Footer'
 import InstallAppButton from '../components/InstallAppButton'
 import SideMenu from '../components/SideMenu'
+import LangToggle from '../components/LangToggle'
 import { useLang } from '../lib/lang'
-import { useAuth } from '../lib/auth'
 import { SOCIAL } from '../lib/social'
 
-/* Grade conforme build-spec: 6 categorias. */
+/* Grade 3×3 aprovada (ESTADO_APROVADO): 9 categorias. */
 const CATEGORIES = [
   { id: 'servicos',     icon: '🔧', pt: 'Serviços',     es: 'Servicios',    subPt: 'Profissionais autônomos e empresas', subEs: 'Profesionales autónomos y empresas' },
   { id: 'produtos',     icon: '📦', pt: 'Produtos',     es: 'Productos',    subPt: 'Compra e venda de itens',            subEs: 'Compra y venta de artículos' },
-  { id: 'desapego',     icon: '♻️', pt: 'Desapego',     es: 'Desapego',     subPt: 'Itens usados com preço camarada',     subEs: 'Artículos usados a buen precio' },
-  { id: 'doacao',       icon: '❤️', pt: 'Doação',       es: 'Donación',     subPt: 'Compartilhando com amor',            subEs: 'Compartiendo con amor' },
-  { id: 'adocao-pets',  icon: '🐾', pt: 'Adoção',       es: 'Adopción',     subPt: 'Adote com amor e responsabilidade',  subEs: 'Adopta con amor y responsabilidad' },
-  { id: 'voluntariado', icon: '💛', pt: 'Voluntariado', es: 'Voluntariado', subPt: 'Ajude e faça a diferença',           subEs: 'Ayuda y marca la diferencia' },
+  { id: 'desapego',     icon: '♻️', pt: 'Desapego',     es: 'Desapego',     subPt: 'Itens usados com precinho camarada',  subEs: 'Artículos usados a buen precio' },
+  { id: 'doacao',       icon: '❤️', pt: 'Doação',       es: 'Donación',     subPt: 'Partilhando com amor',               subEs: 'Compartiendo con amor' },
+  { id: 'adocao-pets',  icon: '🐾', pt: 'Adoção',       es: 'Adopción',     subPt: 'Adote com responsabilidade',         subEs: 'Adopta con responsabilidad' },
+  { id: 'voluntariado', icon: '🤝', pt: 'Voluntariado', es: 'Voluntariado', subPt: 'Ajudar faz a diferença',             subEs: 'Ayudar marca la diferencia' },
+  { id: 'vagas',        icon: '💼', pt: 'Vagas',        es: 'Empleo',       subPt: 'Empregos e oportunidades',           subEs: 'Empleos y oportunidades' },
+  { id: 'promocoes',    icon: '🏷️', pt: 'Promoções',    es: 'Promociones',  subPt: 'Ofertas e descontos',                subEs: 'Ofertas y descuentos' },
+  { id: 'todos',        icon: '🔍', pt: 'Ver Tudo',     es: 'Ver Todo',     subPt: 'Todos os anúncios',                  subEs: 'Todos los anuncios' },
 ]
 
 const TEXT = {
@@ -42,24 +45,11 @@ const TEXT = {
   },
 }
 
-const FLAGS = [
-  { id: 'pt', emoji: '🇧🇷', code: 'PT' },
-  { id: 'es', emoji: '🇪🇸', code: 'ES' },
-]
-
 export default function Home() {
-  const { lang, setLang } = useLang()
-  const { user, signOut }  = useAuth()
+  const { lang } = useLang()
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const t = TEXT[lang]
-
-  // Dentro da plataforma o botão é sempre "Sair":
-  // se houver sessão, encerra; se não, volta para a tela de acesso.
-  const handleExit = async () => {
-    if (user) await signOut()
-    navigate('/entrar')
-  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
@@ -77,7 +67,7 @@ export default function Home() {
           height:             '160px',
         }}
       >
-        <div className="flex items-center justify-between px-4 pt-4">
+        <div className="flex items-center px-4 pt-4">
           <button
             onClick={() => setMenuOpen(true)}
             aria-label="Menu"
@@ -85,15 +75,6 @@ export default function Home() {
                        bg-black/20 text-white hover:bg-black/35 transition-all backdrop-blur-sm"
           >
             <MenuIcon size={16} /> Menu
-          </button>
-
-          <button
-            onClick={handleExit}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm
-                       bg-black/20 text-white hover:bg-black/35 transition-all backdrop-blur-sm"
-          >
-            <LogOut size={14} />
-            {t.exit}
           </button>
         </div>
       </header>
@@ -108,29 +89,9 @@ export default function Home() {
       {/* ══════════ BODY ══════════ */}
       <main className="flex-1 flex flex-col items-center px-4 pb-12 pt-8">
 
-        {/* Seletor de idioma */}
-        <div className="flex gap-4 mb-7">
-          {FLAGS.map(flag => {
-            const active = lang === flag.id
-            return (
-              <button
-                key={flag.id}
-                onClick={() => setLang(flag.id)}
-                aria-pressed={active}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer select-none"
-                style={{
-                  background: active ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.6)',
-                  boxShadow:  active ? '0 0 0 2.5px #1A7A2E, 0 4px 14px rgba(0,0,0,0.15)' : '0 1px 4px rgba(0,0,0,0.12)',
-                  transform:  active ? 'scale(1.08)' : 'scale(1)',
-                }}
-              >
-                <span style={{ fontSize: '1.6rem', lineHeight: 1 }}>{flag.emoji}</span>
-                <span className="font-black text-base" style={{ color: active ? '#1A7A2E' : '#444' }}>
-                  {flag.code}
-                </span>
-              </button>
-            )
-          })}
+        {/* Seletor de idioma — componente padrão */}
+        <div className="mb-7">
+          <LangToggle />
         </div>
 
         {/* Hero */}
@@ -159,7 +120,7 @@ export default function Home() {
                 {t.grid}
               </span>
             </div>
-            <div className="px-4 pb-5 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="px-4 pb-5 grid grid-cols-3 gap-2.5">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.id}
@@ -180,22 +141,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Acesso ao Instagram */}
+        {/* Localização */}
+        <LocationFilter lang={lang} />
+
+        {/* Acesso ao Instagram — abaixo do filtro de localização */}
         {SOCIAL.instagram && (
           <a
             href={SOCIAL.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 mb-8 px-5 py-2.5 rounded-full font-bold text-white text-sm shadow-md hover:opacity-90 active:scale-95 transition-all"
+            className="flex items-center gap-2 mt-8 px-5 py-2.5 rounded-full font-bold text-white text-sm shadow-md hover:opacity-90 active:scale-95 transition-all"
             style={{ background: 'linear-gradient(90deg, #F58529, #DD2A7B, #8134AF)' }}
           >
             <Instagram size={18} />
-            {t.followIg} · @app.brasilespana
+            {t.followIg}
           </a>
         )}
-
-        {/* Localização */}
-        <LocationFilter lang={lang} />
       </main>
 
       <Footer lang={lang} />

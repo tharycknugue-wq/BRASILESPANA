@@ -24,13 +24,7 @@ export default function NotFoundPage() {
   const t = TEXT[lang]
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
-      <PageHeader />
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
-      <main className="flex-1 flex items-center justify-center px-4">
+      <PageHeader />      <main className="flex-1 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
           <div className="text-7xl font-black mb-4" style={{ color: '#1A7A2E' }}>{t.code}</div>
           <h1 className="text-2xl font-black text-gray-900 mb-2">{t.title}</h1>

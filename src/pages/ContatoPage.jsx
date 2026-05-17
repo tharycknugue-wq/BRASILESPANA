@@ -143,12 +143,6 @@ export default function ContatoPage() {
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
       <PageHeader lang={lang} backTo="/" />
 
-      <div className="flex w-full h-2">
-        <div className="flex-1" style={{ background: '#1A7A2E' }} />
-        <div className="flex-1" style={{ background: '#F5C800' }} />
-        <div className="flex-1" style={{ background: '#CC1714' }} />
-      </div>
-
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-black text-gray-900 mb-2">{t.title}</h1>
