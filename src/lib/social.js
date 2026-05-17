@@ -7,14 +7,22 @@ export const CONTACT = {
   // E-mail técnico/transacional da plataforma BRASILESPAÑA
   // (autenticação, notificações, password reset, contact form recipient)
   platform: 'brasilespana@plataformaconexaobr.com',
-  // URL pública da plataforma — subdomínio próprio
-  website:  'https://brasilespana.plataformaconexaobr.com',
+  // Canal RGPD/LGPD — solicitações de dados pessoais
+  privacy:  'privacidade@plataformaconexaobr.com',
+  // Telefone de suporte (preencher quando definido)
+  phone:    '',
+  // URL pública — o site é o Conexão BR; o app BRASILESPAÑA roda dentro dele
+  website:  'https://plataformaconexaobr.com',
 }
 
+// Deixe vazio ('') o que ainda não existe — o componente esconde links vazios.
 export const SOCIAL = {
-  instagram: 'https://instagram.com/brasilespana',
+  instagram: 'https://www.instagram.com/app.brasilespana',
   facebook:  'https://facebook.com/brasilespana',
-  whatsapp:  'https://wa.me/',
+  tiktok:    'https://tiktok.com/@brasilespana',
+  youtube:   'https://youtube.com/@brasilespana',
+  whatsapp:  '',
+  telegram:  '',
 }
 
 export const TEAM = [

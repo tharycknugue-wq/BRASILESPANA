@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { UserPlus, Edit, MessageSquare, CreditCard, Search, Shield, MapPin } from 'lucide-react'
+import { UserPlus, Edit, MessageSquare, CreditCard, Search, Shield, MapPin, PlayCircle } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { useLang } from '../lib/lang'
@@ -10,7 +10,7 @@ const TEXT = {
     subtitle: 'Em 3 passos você está conectado à comunidade',
     steps: [
       { icon: UserPlus, title: 'Crie sua conta', desc: 'Cadastro rápido e gratuito. Apenas e-mail e WhatsApp.' },
-      { icon: Edit, title: 'Publique seu anúncio', desc: 'Escolha uma das 9 categorias, descreva e publique. Assinatura mensal R$ 30 (equivalente em moeda local) via PayPal.' },
+      { icon: Edit, title: 'Publique seu anúncio', desc: 'Conta grátis para navegar. Para publicar, escolha o plano Anunciante: 12,99 €/mês via PayPal.' },
       { icon: MessageSquare, title: 'Conecte-se', desc: 'Receba contatos, converse pelo chat e construa sua reputação na comunidade.' },
     ],
     featuresTitle: 'O que você ganha',
@@ -24,13 +24,20 @@ const TEXT = {
     ctaDesc: 'Junte-se aos brasileiros que já fazem parte da comunidade.',
     ctaBtn: 'Criar conta',
     ctaSecondary: 'Ver anúncios',
+    tutorialTitle: 'Tutorial em vídeo',
+    tutorialDesc: 'Aprenda a usar a plataforma em poucos minutos.',
+    videos: [
+      { title: 'Criando sua conta', soon: 'Em breve' },
+      { title: 'Verificação de anunciante', soon: 'Em breve' },
+      { title: 'Publicando seu anúncio', soon: 'Em breve' },
+    ],
   },
   es: {
     title: 'Cómo funciona',
     subtitle: 'En 3 pasos estás conectado a la comunidad',
     steps: [
       { icon: UserPlus, title: 'Crea tu cuenta', desc: 'Registro rápido y gratis. Solo e-mail y WhatsApp.' },
-      { icon: Edit, title: 'Publica tu anuncio', desc: 'Elige una de las 9 categorías, describe y publica. Suscripción mensual R$ 30 (equivalente en moneda local) vía PayPal.' },
+      { icon: Edit, title: 'Publica tu anuncio', desc: 'Cuenta gratis para navegar. Para publicar, elige el plan Anunciante: 12,99 €/mes vía PayPal.' },
       { icon: MessageSquare, title: 'Conéctate', desc: 'Recibe contactos, conversa por el chat y construye tu reputación en la comunidad.' },
     ],
     featuresTitle: 'Lo que obtienes',
@@ -44,6 +51,13 @@ const TEXT = {
     ctaDesc: 'Únete a los brasileños que ya forman parte de la comunidad.',
     ctaBtn: 'Crear cuenta',
     ctaSecondary: 'Ver anuncios',
+    tutorialTitle: 'Tutorial en vídeo',
+    tutorialDesc: 'Aprende a usar la plataforma en pocos minutos.',
+    videos: [
+      { title: 'Crear tu cuenta', soon: 'Próximamente' },
+      { title: 'Verificación de anunciante', soon: 'Próximamente' },
+      { title: 'Publicar tu anuncio', soon: 'Próximamente' },
+    ],
   },
 }
 
@@ -108,6 +122,27 @@ export default function ComoFuncionaPage() {
                 </div>
               )
             })}
+          </div>
+        </section>
+
+        {/* Tutorial em vídeo */}
+        <section className="mb-8">
+          <h2 className="text-lg font-black text-gray-900 mb-1 px-1">{t.tutorialTitle}</h2>
+          <p className="text-sm text-gray-500 mb-4 px-1">{t.tutorialDesc}</p>
+          <div className="grid sm:grid-cols-3 gap-3">
+            {t.videos.map((v, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
+                  <PlayCircle size={40} className="text-white/70" />
+                  <span className="absolute bottom-2 right-2 text-[10px] font-bold text-white bg-black/50 px-2 py-0.5 rounded-full">
+                    {v.soon}
+                  </span>
+                </div>
+                <div className="p-3">
+                  <p className="text-sm font-bold text-gray-800 leading-tight">{v.title}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

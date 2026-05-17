@@ -51,7 +51,10 @@ export default function Header() {
             {lang === 'pt' ? '🇧🇷 PT' : '🇪🇸 ES'}
           </button>
 
-          <button className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
+          <button
+            onClick={() => navigate('/entrar')}
+            className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+          >
             <User size={15} />
             {t.login}
           </button>
@@ -80,7 +83,10 @@ export default function Header() {
           <Link to="/sobre" className="text-gray-700 font-medium py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>{t.about}</Link>
           <Link to="/contato" className="text-gray-700 font-medium py-2 hover:text-brand-green" onClick={() => setMenuOpen(false)}>{t.contact}</Link>
           <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-            <button className="flex items-center gap-2 text-gray-700 font-medium py-2 hover:text-brand-green">
+            <button
+              onClick={() => { navigate('/entrar'); setMenuOpen(false) }}
+              className="flex items-center gap-2 text-gray-700 font-medium py-2 hover:text-brand-green"
+            >
               <User size={16} /> {t.login}
             </button>
             <button

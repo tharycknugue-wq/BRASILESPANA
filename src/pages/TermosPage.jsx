@@ -24,11 +24,11 @@ const TEXT = {
       },
       {
         title: '4. Assinatura e pagamento',
-        body: 'A assinatura mensal de R$ 30 (ou equivalente em moeda local) dá direito a publicar anúncios. O processamento é feito via PayPal. Você pode cancelar a qualquer momento antes do próximo vencimento, sem multa.',
+        body: 'A criação de conta é gratuita. Para publicar anúncios é necessária a assinatura mensal de 12,99 € (doze euros e noventa e nove cêntimos). O processamento é feito via PayPal. Você pode cancelar a qualquer momento antes do próximo vencimento, sem multa.',
       },
       {
-        title: '5. Cancelamento',
-        body: 'Cancelamento sem fidelidade. O acesso permanece ativo até o fim do período já pago. Não há reembolso proporcional, exceto nos casos previstos pela legislação aplicável (RGPD/LGPD/Defesa do Consumidor).',
+        title: '5. Cancelamento e reembolso',
+        body: 'Cancelamento sem fidelidade, feito a qualquer momento no painel do usuário. O acesso permanece ativo até o fim do período já pago e não há renovação após o cancelamento. Não há reembolso proporcional do período em curso, exceto: (a) nos 14 dias do direito de desistência previsto na legislação de consumo da União Europeia/Espanha, quando aplicável; e (b) nos demais casos exigidos por lei (RGPD/LGPD/Defesa do Consumidor). Reembolsos devidos são processados pelo mesmo meio de pagamento (PayPal) em até 14 dias.',
       },
       {
         title: '6. Proibições',
@@ -68,11 +68,11 @@ const TEXT = {
       },
       {
         title: '4. Suscripción y pago',
-        body: 'La suscripción mensual de R$ 30 (o equivalente en moneda local) da derecho a publicar anuncios. El procesamiento se realiza vía PayPal. Puedes cancelar en cualquier momento antes del próximo vencimiento, sin penalización.',
+        body: 'La creación de cuenta es gratuita. Para publicar anuncios se requiere una suscripción mensual de 12,99 € (doce euros con noventa y nueve céntimos). El procesamiento se realiza vía PayPal. Puedes cancelar en cualquier momento antes del próximo vencimiento, sin penalización.',
       },
       {
-        title: '5. Cancelación',
-        body: 'Cancelación sin permanencia. El acceso permanece activo hasta el fin del período pagado. No hay reembolso proporcional, salvo en los casos previstos por la legislación aplicable (RGPD/LGPD/Defensa del Consumidor).',
+        title: '5. Cancelación y reembolso',
+        body: 'Cancelación sin permanencia, realizada en cualquier momento desde el panel del usuario. El acceso permanece activo hasta el fin del período pagado y no se renueva tras la cancelación. No hay reembolso proporcional del período en curso, salvo: (a) en los 14 días del derecho de desistimiento previsto en la legislación de consumo de la Unión Europea/España, cuando proceda; y (b) en los demás casos exigidos por ley (RGPD/LGPD/Defensa del Consumidor). Los reembolsos debidos se procesan por el mismo medio de pago (PayPal) en hasta 14 días.',
       },
       {
         title: '6. Prohibiciones',

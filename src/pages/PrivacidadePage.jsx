@@ -8,7 +8,7 @@ const TEXT = {
   pt: {
     title: 'Política de Privacidade',
     updatedAt: 'Atualizada em 2026',
-    intro: 'O BRASILESPAÑA respeita sua privacidade e cumpre o Regulamento Geral de Proteção de Dados (RGPD) da União Europeia e a Lei Geral de Proteção de Dados (LGPD) do Brasil.',
+    intro: 'O BRASILESPAÑA respeita sua privacidade e cumpre o Regulamento Geral de Proteção de Dados (RGPD) da União Europeia, a Lei Orgânica 3/2018 da Espanha (LOPDGDD) e a Lei Geral de Proteção de Dados (LGPD) do Brasil. O consentimento é livre e explícito — nenhuma caixa vem pré-marcada.',
     sections: [
       {
         icon: Database,
@@ -42,23 +42,34 @@ const TEXT = {
         ],
       },
       {
+        icon: Shield,
+        title: 'Base legal e compartilhamento',
+        items: [
+          'Bases legais: consentimento, execução de contrato, obrigações legais e interesse legítimo',
+          'Pagamentos processados por provedor externo (PayPal) — não armazenamos dados do cartão',
+          'Compartilhamento apenas com outros usuários (dentro da plataforma), provedores técnicos e autoridades quando exigido por lei',
+          'Documentos de verificação ficam em armazenamento privado e criptografado, usados só para verificação',
+        ],
+      },
+      {
         icon: Trash2,
         title: 'Retenção e exclusão',
         items: [
           'Mantemos seus dados enquanto sua conta estiver ativa',
+          'Você pode excluir sua conta e dados a qualquer momento no seu painel',
           'Após exclusão, dados são removidos em até 30 dias',
           'Backups são automaticamente expirados em 90 dias',
           'Dados fiscais retidos pelo período exigido por lei',
         ],
       },
     ],
-    contactTitle: 'Encarregado de Proteção de Dados',
-    contactDesc: 'Para qualquer solicitação envolvendo seus dados pessoais, entre em contato:',
+    contactTitle: 'Canal de Proteção de Dados',
+    contactDesc: 'Para acessar, corrigir, portar ou excluir seus dados, ou retirar o consentimento, escreva para:',
   },
   es: {
     title: 'Política de Privacidad',
     updatedAt: 'Actualizada en 2026',
-    intro: 'BRASILESPAÑA respeta tu privacidad y cumple el Reglamento General de Protección de Datos (RGPD) de la Unión Europea y la Ley General de Protección de Datos (LGPD) de Brasil.',
+    intro: 'BRASILESPAÑA respeta tu privacidad y cumple el Reglamento General de Protección de Datos (RGPD) de la Unión Europea, la Ley Orgánica 3/2018 de España (LOPDGDD) y la Ley General de Protección de Datos (LGPD) de Brasil. El consentimiento es libre y explícito — ninguna casilla viene premarcada.',
     sections: [
       {
         icon: Database,
@@ -92,18 +103,29 @@ const TEXT = {
         ],
       },
       {
+        icon: Shield,
+        title: 'Base legal y compartición',
+        items: [
+          'Bases legales: consentimiento, ejecución de contrato, obligaciones legales e interés legítimo',
+          'Pagos procesados por proveedor externo (PayPal) — no almacenamos datos de la tarjeta',
+          'Compartición solo con otros usuarios (dentro de la plataforma), proveedores técnicos y autoridades cuando lo exija la ley',
+          'Documentos de verificación en almacenamiento privado y cifrado, usados solo para la verificación',
+        ],
+      },
+      {
         icon: Trash2,
         title: 'Retención y eliminación',
         items: [
           'Mantenemos tus datos mientras tu cuenta esté activa',
+          'Puedes eliminar tu cuenta y datos cuando quieras desde tu panel',
           'Tras la eliminación, los datos se borran en hasta 30 días',
           'Las copias de seguridad caducan automáticamente en 90 días',
           'Datos fiscales retenidos por el período exigido por ley',
         ],
       },
     ],
-    contactTitle: 'Delegado de Protección de Datos',
-    contactDesc: 'Para cualquier solicitud sobre tus datos personales, contacta:',
+    contactTitle: 'Canal de Protección de Datos',
+    contactDesc: 'Para acceder, corregir, portar o eliminar tus datos, o retirar el consentimiento, escribe a:',
   },
 }
 
@@ -166,10 +188,10 @@ export default function PrivacidadePage() {
             <h2 className="text-base font-black text-gray-900">{t.contactTitle}</h2>
           </div>
           <p className="text-sm text-gray-700 mb-3">{t.contactDesc}</p>
-          <a href={`mailto:${CONTACT.email}`}
+          <a href={`mailto:${CONTACT.privacy}`}
              className="inline-block px-5 py-2.5 rounded-xl font-bold text-white text-sm"
              style={{ background: '#1A7A2E' }}>
-            {CONTACT.email}
+            {CONTACT.privacy}
           </a>
         </section>
       </main>

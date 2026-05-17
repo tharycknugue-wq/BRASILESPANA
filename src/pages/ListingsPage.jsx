@@ -10,6 +10,7 @@ const CATEGORY_META = {
   produtos:     { pt: 'Produtos',     es: 'Productos',     icon: '📦', color: '#1565C0', bg: '#E3F2FD' },
   desapego:     { pt: 'Desapego',     es: 'Desapego',      icon: '♻️', color: '#6A1B9A', bg: '#F3E5F5' },
   doacao:       { pt: 'Doação',       es: 'Donación',      icon: '❤️', color: '#CC1714', bg: '#FFEBEE' },
+  'adocao-pets':{ pt: 'Adoção',       es: 'Adopción',      icon: '🐾', color: '#7B5E3C', bg: '#F5EBE0' },
   vagas:        { pt: 'Vagas',        es: 'Empleo',        icon: '💼', color: '#E65100', bg: '#FFF3E0' },
   voluntariado: { pt: 'Voluntariado', es: 'Voluntariado',  icon: '🤝', color: '#00695C', bg: '#E0F2F1' },
   promocoes:    { pt: 'Promoções',    es: 'Promociones',   icon: '🏷️', color: '#B8860B', bg: '#FFFDE7' },
@@ -147,7 +148,7 @@ export default function ListingsPage() {
                 key={f.key}
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-brand-green"
               >
-                {f.label}: {f.value}
+                {f.label}: {f.values.join(', ')}
                 <button onClick={() => removeLocFilter(f.key)} className="hover:text-red-500 transition-colors">
                   <X size={10} />
                 </button>
@@ -167,6 +168,7 @@ export default function ListingsPage() {
             {filtered.map(ad => (
               <div
                 key={ad.id}
+                onClick={() => navigate(`/anuncio/${ad.id}`)}
                 className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer
                            hover:shadow-md hover:-translate-y-1 transition-all duration-200 group"
               >

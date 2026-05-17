@@ -12,6 +12,8 @@ import {
   AUTH_ERRORS,
   safeLog,
 } from '../lib/security'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/auth'
 
 const TEXT = {
   pt: {
@@ -56,6 +58,7 @@ const TEXT = {
 
 export default function LoginPage() {
   const { lang }            = useLang()
+  const { signInDemo, isDemo } = useAuth()
   const [showPass, setShowPass] = useState(false)
   const [form, setForm]         = useState({ email: '', password: '' })
   const [errors, setErrors]     = useState({})
@@ -116,19 +119,23 @@ export default function LoginPage() {
     try {
       safeLog('Login attempt', { email: form.email, csrf: csrfToken })
 
-      /* ── Integrar com Supabase aqui ──
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email:    form.email,
-        password: form.password,
-      })
-      if (error) throw error
-      rateLimiter.reset()
-      navigate('/')
-      ── */
-
-      // Simulação: força erro para demonstrar rate limiting
-      await new Promise(r => setTimeout(r, 900))
-      throw new Error('INVALID_CREDENTIALS')
+      if (supabase) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email:    form.email,
+          password: form.password,
+        })
+        if (error) throw error
+        rateLimiter.reset()
+        navigate('/painel')
+        return
+      } else {
+        // Modo demonstração: entra sem servidor (só para revisar as telas)
+        await new Promise(r => setTimeout(r, 500))
+        signInDemo({ email: form.email, lang })
+        rateLimiter.reset()
+        navigate('/painel')
+        return
+      }
 
     } catch {
       // Registrar tentativa falha ANTES de mostrar erro
@@ -179,6 +186,16 @@ export default function LoginPage() {
               <p className="text-sm text-gray-400">{t.subtitle}</p>
             </div>
 
+            {isDemo && (
+              <div className="mb-5 p-3 rounded-xl text-xs leading-relaxed"
+                   style={{ background: '#FFF7DB', border: '1px solid #F5C800', color: '#7B5E00' }}>
+                <strong>🧪 {lang === 'pt' ? 'Modo demonstração' : 'Modo demostración'}</strong><br />
+                {lang === 'pt'
+                  ? 'Sem servidor conectado. Qualquer e-mail e senha (mín. 8 caracteres) entram, só para você revisar as telas. Nada é salvo.'
+                  : 'Sin servidor conectado. Cualquier e-mail y contraseña (mín. 8 caracteres) entran, solo para revisar las pantallas. No se guarda nada.'}
+              </div>
+            )}
+
             {/* Banner de bloqueio */}
             {blocked && (
               <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200 mb-5">
@@ -224,13 +241,13 @@ export default function LoginPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-sm font-semibold text-gray-700">{t.password}</label>
-                  <button
-                    type="button"
+                  <Link
+                    to="/esqueci-senha"
                     className="text-xs font-medium hover:underline"
                     style={{ color: '#1A7A2E' }}
                   >
                     {t.forgot}
-                  </button>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />

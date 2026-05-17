@@ -68,13 +68,13 @@ export default function SobrePage() {
       </div>
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8">
-        <div className="text-center mb-8">
+        <div id="apresentacao" className="text-center mb-8 scroll-mt-24">
           <h1 className="text-3xl font-black text-gray-900 mb-2">{t.title}</h1>
           <p className="text-gray-500 text-sm">{t.subtitle}</p>
         </div>
 
         {/* Missão */}
-        <section className="bg-white rounded-3xl shadow-sm p-6 mb-6">
+        <section id="missao" className="bg-white rounded-3xl shadow-sm p-6 mb-6 scroll-mt-24">
           <h2 className="text-lg font-black mb-3" style={{ color: '#1A7A2E' }}>{t.missionTitle}</h2>
           <p className="text-gray-700 leading-relaxed text-sm">{t.mission}</p>
         </section>
@@ -90,13 +90,13 @@ export default function SobrePage() {
         </section>
 
         {/* Visão */}
-        <section className="bg-white rounded-3xl shadow-sm p-6 mb-6">
+        <section id="visao" className="bg-white rounded-3xl shadow-sm p-6 mb-6 scroll-mt-24">
           <h2 className="text-lg font-black mb-3" style={{ color: '#1A7A2E' }}>{t.visionTitle}</h2>
           <p className="text-gray-700 leading-relaxed text-sm">{t.vision}</p>
         </section>
 
         {/* Valores */}
-        <section className="mb-6">
+        <section id="valores" className="mb-6 scroll-mt-24">
           <h2 className="text-lg font-black text-gray-900 mb-4 px-2">{t.valuesTitle}</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {t.values.map((v) => {

@@ -1,13 +1,36 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Upload, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Upload, CheckCircle, AlertTriangle } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useLang } from '../lib/lang'
+import { useAuth } from '../lib/auth'
+import { supabase } from '../lib/supabase'
+import { sanitize } from '../lib/security'
+
+const CATEGORY_ID = {
+  'Serviços': 'servicos', 'Servicios': 'servicos',
+  'Produtos': 'produtos', 'Productos': 'produtos',
+  'Desapego': 'desapego',
+  'Doação': 'doacao', 'Donación': 'doacao',
+  'Adoção': 'adocao-pets', 'Adopción': 'adocao-pets',
+  'Vagas': 'vagas', 'Empleo': 'vagas',
+  'Voluntariado': 'voluntariado',
+  'Promoções': 'promocoes', 'Promociones': 'promocoes',
+}
 
 const CATEGORIES = {
-  pt: ['Serviços', 'Produtos', 'Desapego', 'Doação', 'Vagas', 'Voluntariado', 'Promoções'],
-  es: ['Servicios', 'Productos', 'Desapego', 'Donación', 'Empleo', 'Voluntariado', 'Promociones'],
+  pt: ['Serviços', 'Produtos', 'Desapego', 'Doação', 'Adoção', 'Vagas', 'Voluntariado', 'Promoções'],
+  es: ['Servicios', 'Productos', 'Desapego', 'Donación', 'Adopción', 'Empleo', 'Voluntariado', 'Promociones'],
+}
+
+const COMUNIDADES = {
+  pt: ['Andaluzia','Aragão','Astúrias','Canárias','Cantábria','Castela-A Mancha','Castela e Leão',
+       'Catalunha','Extremadura','Galiza','Ilhas Baleares','La Rioja','Madrid','Múrcia','Navarra',
+       'País Basco','Valência'],
+  es: ['Andalucía','Aragón','Asturias','Canarias','Cantabria','Castilla-La Mancha','Castilla y León',
+       'Cataluña','Extremadura','Galicia','Islas Baleares','La Rioja','Madrid','Murcia','Navarra',
+       'País Vasco','Valencia'],
 }
 
 const STEPS = {
@@ -18,8 +41,11 @@ const STEPS = {
 export default function NewAdPage() {
   const navigate = useNavigate()
   const { lang } = useLang()
+  const { user, loading: authLoading } = useAuth()
   const [step, setStep] = useState(0)
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [form, setForm] = useState({
     category: '',
     title: '',
@@ -29,7 +55,24 @@ export default function NewAdPage() {
     location: '',
     province: '',
     city: '',
+    promo: false,
   })
+
+  // Guard: só anunciante com KYC verificado pode acessar.
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) { navigate('/entrar'); return }
+    if (!supabase) return
+    let cancelled = false
+    supabase.from('profiles').select('account_type,kyc_status').eq('id', user.id).maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data) return
+        if (data.account_type !== 'advertiser' || data.kyc_status !== 'verified') {
+          navigate('/anunciante/verificacao')
+        }
+      })
+    return () => { cancelled = true }
+  }, [user, authLoading, navigate])
 
   const t = {
     pt: {
@@ -85,11 +128,40 @@ export default function NewAdPage() {
   const cats = CATEGORIES[lang]
   const steps = STEPS[lang]
 
-  const updateForm = (key, val) => setForm(f => ({ ...f, [key]: val }))
+  const updateForm = (key, val) => setForm(f => ({ ...f, [key]: sanitize(val) }))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
+    if (!user) { navigate('/entrar'); return }
+    setSubmitting(true); setSubmitError('')
+
+    try {
+      if (supabase) {
+        const { error } = await supabase.from('ads').insert({
+          user_id:     user.id,
+          category:    CATEGORY_ID[form.category] || form.category,
+          title:       form.title,
+          description: form.description,
+          price:       form.price || null,
+          contact:     form.contact,
+          comunidade:  form.location,
+          provincia:   form.province || null,
+          municipio:   form.city,
+          promo:       !!form.promo,
+          status:      'pending',
+        })
+        if (error) throw error
+      } else {
+        await new Promise(r => setTimeout(r, 600))
+      }
+      setSubmitted(true)
+    } catch (err) {
+      setSubmitError(lang === 'pt'
+        ? 'Erro ao publicar. Tente novamente.'
+        : 'Error al publicar. Inténtalo de nuevo.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (submitted) {
@@ -116,7 +188,7 @@ export default function NewAdPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-brand-blue">
-      <Header lang={lang} setLang={setLang} />
+      <Header />
 
       <main className="flex-1 max-w-xl mx-auto w-full px-4 py-8">
         {/* Back */}
@@ -238,9 +310,7 @@ export default function NewAdPage() {
                              focus:outline-none focus:border-brand-green focus:ring-2 focus:ring-green-100 transition-all"
                 >
                   <option value="">—</option>
-                  {['Andaluzia','Aragão','Astúrias','Canárias','Cantábria','Castela-A Mancha','Castela e Leão',
-                    'Catalunha','Extremadura','Galiza','Ilhas Baleares','La Rioja','Madrid','Múrcia','Navarra',
-                    'País Basco','Valência'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {COMUNIDADES[lang].map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
@@ -284,7 +354,36 @@ export default function NewAdPage() {
                   </div>
                 ))}
               </div>
-              <button onClick={handleSubmit} className="btn-primary w-full">{t.submit}</button>
+              <label className="flex items-start gap-3 cursor-pointer select-none p-3 rounded-xl border border-gray-100 mb-4">
+                <input type="checkbox" checked={!!form.promo}
+                  onChange={e => setForm(f => ({ ...f, promo: e.target.checked }))}
+                  className="mt-0.5 w-4 h-4 accent-yellow-500" />
+                <span>
+                  <span className="text-sm font-bold text-gray-800">
+                    🏷️ {lang === 'pt' ? 'Marcar como Promoção' : 'Marcar como Promoción'}
+                  </span>
+                  <span className="block text-xs text-gray-500">
+                    {lang === 'pt'
+                      ? 'Aparece destacado na categoria Promoções.'
+                      : 'Aparece destacado en la categoría Promociones.'}
+                  </span>
+                </span>
+              </label>
+              {submitError && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 mb-3">
+                  <AlertTriangle size={15} className="text-red-500" />
+                  <p className="text-xs text-red-600">{submitError}</p>
+                </div>
+              )}
+              <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="btn-primary w-full disabled:opacity-60"
+              >
+                {submitting
+                  ? (lang === 'pt' ? 'Publicando...' : 'Publicando...')
+                  : t.submit}
+              </button>
             </div>
           )}
         </div>
