@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, Navigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom'
 import {
   ShieldCheck, Inbox, Users, CreditCard, BarChart3, MessagesSquare,
   Check, X, Send, AlertTriangle, Plus, Trash2,
@@ -31,9 +31,14 @@ export default function FundadorConsolePage() {
   const { lang } = useLang()
   const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
-  const [tab, setTab] = useState('mod')
+  const location = useLocation()
+  const [tab, setTab] = useState(location.state?.tab || 'mod')
   const [tick, setTick] = useState(0)            // força refresh dos stores
   const refresh = () => setTick(x => x + 1)
+
+  useEffect(() => {
+    if (location.state?.tab) setTab(location.state.tab)
+  }, [location.state])
 
   if (authLoading) {
     return <Frame><div className="flex-1 flex items-center justify-center text-gray-500 text-sm">…</div></Frame>

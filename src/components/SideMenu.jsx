@@ -4,10 +4,20 @@ import {
   X, ChevronDown, Info, PlayCircle, MessageSquare,
   Share2, FileText, LayoutDashboard, Megaphone, LogIn, UserPlus, LogOut,
   Instagram, Facebook, Music2, Youtube, MessageCircle, Send, UserCircle, Download,
+  ShieldCheck, Inbox, Users, CreditCard, BarChart3, MessagesSquare, Globe,
 } from 'lucide-react'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
-import { isFounder } from '../lib/founders'
+import { isFounder, founderInfo } from '../lib/founders'
+
+const FOUNDER_NAV = [
+  { tab: 'mod',     Icon: ShieldCheck,    pt: 'Moderação',          es: 'Moderación' },
+  { tab: 'inbox',   Icon: Inbox,          pt: 'Caixa (meu setor)',  es: 'Bandeja (mi sector)' },
+  { tab: 'users',   Icon: Users,          pt: 'Usuários',           es: 'Usuarios' },
+  { tab: 'fin',     Icon: CreditCard,     pt: 'Financeiro',         es: 'Finanzas' },
+  { tab: 'metrics', Icon: BarChart3,      pt: 'Métricas',           es: 'Métricas' },
+  { tab: 'fchat',   Icon: MessagesSquare, pt: 'Chat dos fundadores',es: 'Chat de fundadores' },
+]
 import { SOCIAL } from '../lib/social'
 
 const T = {
@@ -113,7 +123,9 @@ export default function SideMenu({ open, onClose }) {
   const { lang } = useLang()
   const { user, signOut } = useAuth()
   const founder = isFounder(user)
+  const me = founder ? founderInfo(user) : null
   const isAdvertiser = user?.user_metadata?.account_type === 'advertiser'
+  const goFounder = (tab) => { onClose(); navigate('/fundador', { state: { tab } }) }
   const t = T[lang]
 
   useEffect(() => {
@@ -191,6 +203,30 @@ export default function SideMenu({ open, onClose }) {
           </div>
         )}
 
+        {/* Menu do FUNDADOR — coerente com o setor */}
+        {founder && (
+          <div className="border-b border-gray-100">
+            <div className="px-5 py-3 bg-green-50">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">
+                {lang === 'es' ? 'Tu sector' : 'Seu setor'}
+              </p>
+              <p className="font-black text-gray-900">{me?.name} · {me?.area}</p>
+            </div>
+            {FOUNDER_NAV.map(it => (
+              <button key={it.tab} onClick={() => goFounder(it.tab)}
+                className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">
+                <it.Icon size={17} style={{ color: '#1A7A2E' }} />
+                {lang === 'es' ? it.es : it.pt}
+              </button>
+            ))}
+            <button onClick={() => go('/')}
+              className="w-full flex items-center gap-3 px-5 py-3 text-sm text-gray-500 hover:bg-gray-50">
+              <Globe size={17} /> {lang === 'es' ? 'Ver sitio público' : 'Ver site público'}
+            </button>
+          </div>
+        )}
+
+        {!founder && (<>
         <Group icon={Info} label={t.about}>
           {t.aboutSub.map(subBtn)}
         </Group>
@@ -218,9 +254,10 @@ export default function SideMenu({ open, onClose }) {
         <Group icon={Download} label={t.downloadApp} onPick={go} to="/baixar-app" />
 
         <Group icon={FileText} label={t.terms} onPick={go} to="/termos" />
+        </>)}
 
-        {/* Ações de conta — apenas para quem está logado */}
-        {user && (
+        {/* Ações de conta — quem está logado e NÃO é fundador */}
+        {user && !founder && (
           <div className="mt-auto border-t border-gray-100 py-2">
             <button onClick={() => go('/perfil')}
               className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-green-50">

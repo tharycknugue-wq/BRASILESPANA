@@ -41,7 +41,9 @@ export function founderKey(user) {
   const local = email.endsWith(FOUNDER_DOMAIN)
     ? email.slice(0, -FOUNDER_DOMAIN.length)
     : ''
-  if (FOUNDERS[local]) return local
+  if (local.includes('tharyck')) return 'tharyck'
+  if (local.includes('michele')) return 'michele'
+  if (local.includes('thayza'))  return 'thayza'
   return 'geral'
 }
 
