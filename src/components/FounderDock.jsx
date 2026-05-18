@@ -3,9 +3,13 @@ import { Users, X, Send, Star } from 'lucide-react'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
 import { isFounder, founderInfo, FOUNDERS } from '../lib/founders'
-import { touchPresence, onlineKeys, loadPair, sendPair, pairPartnersFor } from '../lib/support'
+import {
+  touchPresence, onlineKeys, loadPair, sendPair, pairPartnersFor,
+  loadFounderChat, founderChatSend,
+} from '../lib/support'
 
 const PEERS = Object.values(FOUNDERS).filter(f => f.key !== 'geral')
+const GROUP = '__group__'
 
 export default function FounderDock() {
   const { lang } = useLang()
@@ -49,7 +53,9 @@ export default function FounderDock() {
   const L = (pt, es) => (lang === 'es' ? es : pt)
   const isOnline = (k) => k === myKey || online.includes(k)
   const isPartner = (k) => String(k).includes('@')
-  const nameOf = (k) => FOUNDERS[k]?.name || k
+  const nameOf = (k) => k === GROUP
+    ? L('Grupo dos Fundadores', 'Grupo de Fundadores')
+    : (FOUNDERS[k]?.name || k)
 
   const openWin = (k) => {
     setListOpen(false)
@@ -59,7 +65,8 @@ export default function FounderDock() {
   const send = (k) => {
     const text = (drafts[k] || '').trim()
     if (!text) return
-    sendPair(myKey, k, myKey, me?.name || 'Fundador', text)
+    if (k === GROUP) founderChatSend({ founderKey: myKey, name: me?.name || 'Fundador', text })
+    else sendPair(myKey, k, myKey, me?.name || 'Fundador', text)
     setDrafts(d => ({ ...d, [k]: '' }))
     force(x => x + 1)
   }
@@ -107,24 +114,28 @@ export default function FounderDock() {
           </div>
 
           <ul className="py-1">
-            {PEERS.map(f => {
-              const self = f.key === myKey
-              return self ? (
-                <li key={f.key} className="flex items-center gap-3 px-4 py-2.5 opacity-60">
-                  <span className="relative w-9 h-9 rounded-full flex items-center justify-center font-black text-white"
-                        style={{ background: '#1A7A2E' }}>
-                    {f.name.charAt(0)}
-                    <span className="absolute -bottom-0 -right-0 w-3 h-3 rounded-full border-2 border-white" style={{ background: '#22C55E' }} />
+            {/* Grupo geral dos fundadores (conversas gerais) */}
+            <li>
+              <button onClick={() => openWin(GROUP)}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50">
+                <span className="w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0"
+                      style={{ background: '#1A7A2E' }}>
+                  <Users size={16} />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-bold text-gray-800 truncate">
+                    {L('Grupo dos Fundadores', 'Grupo de Fundadores')}
                   </span>
-                  <span className="min-w-0">
-                    <span className="block text-sm font-bold text-gray-800 truncate">{f.name}{L(' (você)', ' (tú)')}</span>
-                    <span className="block text-[11px] text-gray-500">{f.area}</span>
+                  <span className="block text-[11px] text-gray-500 truncate">
+                    {L('Conversas gerais · todos os fundadores', 'Conversaciones generales · todos los fundadores')}
                   </span>
-                </li>
-              ) : (
-                <li key={f.key}><Row k={f.key} name={f.name} sub={f.area} accent="#1A7A2E" /></li>
-              )
-            })}
+                </span>
+              </button>
+            </li>
+            {/* Conversas privadas 1:1 com cada fundador */}
+            {PEERS.filter(f => f.key !== myKey).map(f => (
+              <li key={f.key}><Row k={f.key} name={f.name} sub={f.area} accent="#1A7A2E" /></li>
+            ))}
           </ul>
 
           {/* Parceiros — prioridade máxima (amarelo) */}
@@ -152,11 +163,12 @@ export default function FounderDock() {
       )}
 
       {windows.map((k, i) => {
-        const partner = isPartner(k)
+        const group = k === GROUP
+        const partner = !group && isPartner(k)
         const headBg = partner ? '#F5C800' : '#1A7A2E'
         const headFg = partner ? '#3a2a00' : '#FFFFFF'
-        const msgs = loadPair(myKey, k)
-        const on = isOnline(k)
+        const msgs = group ? loadFounderChat() : loadPair(myKey, k)
+        const on = group ? true : isOnline(k)
         return (
           <div key={k}
             className="fixed z-[92] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
@@ -164,7 +176,7 @@ export default function FounderDock() {
             <div className="flex items-center justify-between px-3 py-2" style={{ background: headBg, color: headFg }}>
               <span className="flex items-center gap-1.5 font-bold text-sm truncate">
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: on ? '#22C55E' : '#9CA3AF' }} />
-                {partner && <Star size={12} />} {nameOf(k)}
+                {group ? <Users size={12} /> : partner ? <Star size={12} /> : null} {nameOf(k)}
               </span>
               <button onClick={() => closeWin(k)} aria-label="X" className="opacity-80 hover:opacity-100"><X size={16} /></button>
             </div>
@@ -173,9 +185,12 @@ export default function FounderDock() {
                 <p className="text-xs text-gray-400 text-center mt-4">{L('Comece a conversa.', 'Empieza la conversación.')}</p>
               )}
               {msgs.map((m, idx) => {
-                const mine = m.from === myKey
+                const mine = group ? m.founderKey === myKey : m.from === myKey
                 return (
                   <div key={idx} className={mine ? 'text-right' : ''}>
+                    {group && !mine && (
+                      <span className="block text-[10px] font-bold text-gray-400">{m.name}</span>
+                    )}
                     <span className="inline-block px-2.5 py-1.5 rounded-2xl text-sm max-w-[85%]"
                       style={{ background: mine ? '#1A7A2E' : '#FFFFFF', color: mine ? '#FFF' : '#374151', border: '1px solid #E5E7EB' }}>
                       {m.text}
