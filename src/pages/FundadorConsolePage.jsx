@@ -444,9 +444,11 @@ function Usuarios({ lang }) {
     if (nu.includes(ql)) return 3
     return 9
   }
+  // Sugestões buscam em TODAS as categorias (não só na aba atual)
   const suggestions = ql
-    ? rows0.filter(u => rankOf(u) < 9).sort((a, b) => rankOf(a) - rankOf(b)).slice(0, 6)
+    ? all.filter(u => rankOf(u) < 9).sort((a, b) => rankOf(a) - rankOf(b)).slice(0, 6)
     : []
+  const applySug = (u) => { setSub(u.cat); setQ(u.email); setShowSug(false) }
 
   return (
     <Card title={L('Usuários', 'Usuarios')}>
@@ -475,6 +477,7 @@ function Usuarios({ lang }) {
           onChange={e => { setQ(e.target.value); setShowSug(true) }}
           onFocus={() => setShowSug(true)}
           onBlur={() => setTimeout(() => setShowSug(false), 150)}
+          onKeyDown={e => { if (e.key === 'Enter' && suggestions.length) { e.preventDefault(); applySug(suggestions[0]) } }}
           placeholder={L('Buscar por nome, e-mail ou nº...', 'Buscar por nombre, e-mail o nº...')}
           className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-100"
         />
@@ -483,7 +486,7 @@ function Usuarios({ lang }) {
             {suggestions.map(u => (
               <li key={u.email}>
                 <button
-                  onMouseDown={() => { setQ(u.email); setShowSug(false) }}
+                  onMouseDown={() => applySug(u)}
                   className="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2">
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold text-gray-800 truncate">{u.name}</span>
