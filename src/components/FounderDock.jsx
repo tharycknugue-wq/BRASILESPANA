@@ -5,7 +5,7 @@ import { useAuth } from '../lib/auth'
 import { isFounder, founderInfo, FOUNDERS } from '../lib/founders'
 import {
   touchPresence, onlineKeys, loadPair, sendPair, pairPartnersFor,
-  loadFounderChat, founderChatSend,
+  loadFounderChat, founderChatSend, markRead, readsFor, convPair,
 } from '../lib/support'
 
 const PEERS = Object.values(FOUNDERS).filter(f => f.key !== 'geral')
@@ -46,6 +46,11 @@ export default function FounderDock() {
 
   useEffect(() => {
     windows.forEach(p => endRefs.current[p]?.scrollIntoView({ behavior: 'smooth' }))
+  })
+
+  // Marca como lido o que está aberto (confirmação de leitura)
+  useEffect(() => {
+    windows.forEach(k => markRead(k === GROUP ? 'group' : convPair(myKey, k), myKey))
   })
 
   if (!founder) return null
@@ -169,6 +174,21 @@ export default function FounderDock() {
         const headFg = partner ? '#3a2a00' : '#FFFFFF'
         const msgs = group ? loadFounderChat() : loadPair(myKey, k)
         const on = group ? true : isOnline(k)
+        const cid = group ? 'group' : convPair(myKey, k)
+        const reads = readsFor(cid)
+        const myMsgs = msgs.filter(m => (group ? m.founderKey === myKey : m.from === myKey))
+        const lastTs = myMsgs.length ? myMsgs[myMsgs.length - 1].ts : 0
+        let readLabel = ''
+        if (lastTs) {
+          if (group) {
+            const ns = PEERS.filter(f => f.key !== myKey && (reads[f.key] || 0) >= lastTs).map(f => f.name)
+            readLabel = ns.length ? `✓✓ ${L('Visto por', 'Visto por')} ${ns.join(', ')}` : ''
+          } else if (partner) {
+            readLabel = (reads[k] || 0) >= lastTs ? L('✓✓ Parceiro visualizou', '✓✓ Socio lo vio') : ''
+          } else {
+            readLabel = (reads[k] || 0) >= lastTs ? L('✓✓ Visto', '✓✓ Visto') : ''
+          }
+        }
         return (
           <div key={k}
             className="fixed z-[92] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
@@ -198,6 +218,9 @@ export default function FounderDock() {
                   </div>
                 )
               })}
+              {readLabel && (
+                <p className="text-[10px] text-right px-1" style={{ color: '#1A7A2E' }}>{readLabel}</p>
+              )}
               <div ref={el => { endRefs.current[k] = el }} />
             </div>
             <div className="p-2 border-t border-gray-100 flex gap-1.5">

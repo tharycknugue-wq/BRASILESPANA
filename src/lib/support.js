@@ -98,8 +98,8 @@ export function userSend({ email, name, lang, text }) {
   th.messages.push({
     from: 'ai',
     text: lang === 'es'
-      ? `Recibido. Te dirigí a ${labelOf(key)} (${category}). Un fundador responderá aquí.`
-      : `Recebido. Direcionei para ${labelOf(key)} (${category}). Um fundador responderá aqui.`,
+      ? `¡Gracias por escribir! Ya entendí tu solicitud (${category}). Lo estoy resolviendo y te respondo por aquí lo antes posible. 🙌`
+      : `Obrigado por escrever! Já entendi seu pedido (${category}). Estou cuidando disso e te respondo por aqui o quanto antes. 🙌`,
     ts: now + 1,
   })
   saveThreads(list)
@@ -192,4 +192,69 @@ export function pairPartnersFor(founderKey) {
   })
   onlineKeys().forEach(k => { if (k.includes('@')) set.add(k) })
   return [...set]
+}
+
+/* ---- Confirmação de leitura (apenas conversas de fundadores) ---- */
+const READS_KEY = 'be_reads'
+export function convPair(a, b) { return pairId(a, b) }
+
+export function markRead(convId, readerKey) {
+  if (!convId || !readerKey) return
+  let m = {}
+  try { m = JSON.parse(localStorage.getItem(READS_KEY) || '{}') } catch { /* ignore */ }
+  m[convId] = { ...(m[convId] || {}), [readerKey]: Date.now() }
+  try { localStorage.setItem(READS_KEY, JSON.stringify(m)) } catch { /* ignore */ }
+}
+export function readsFor(convId) {
+  let m = {}
+  try { m = JSON.parse(localStorage.getItem(READS_KEY) || '{}') } catch { /* ignore */ }
+  return m[convId] || {}
+}
+
+/* ---- IA bilíngue + tradução básica (demo). IA completa = backend/LLM ---- */
+const ES_PT = {
+  'hola': 'olá', 'gracias': 'obrigado', 'buenos días': 'bom dia', 'buenas': 'olá',
+  'no funciona': 'não funciona', 'no puedo': 'não consigo', 'ayuda': 'ajuda',
+  'problema': 'problema', 'pago': 'pagamento', 'pagar': 'pagar', 'cobro': 'cobrança',
+  'tarjeta': 'cartão', 'cuenta': 'conta', 'contraseña': 'senha', 'correo': 'e-mail',
+  'anuncio': 'anúncio', 'queja': 'reclamação', 'reclamación': 'reclamação',
+  'denuncia': 'denúncia', 'no me deja': 'não me deixa', 'error': 'erro',
+  'gracias!': 'obrigado!', 'por favor': 'por favor', 'necesito': 'preciso',
+}
+const PT_ES = {
+  'olá': 'hola', 'obrigado': 'gracias', 'bom dia': 'buenos días', 'ajuda': 'ayuda',
+  'pagamento': 'pago', 'cobrança': 'cobro', 'cartão': 'tarjeta', 'conta': 'cuenta',
+  'senha': 'contraseña', 'e-mail': 'correo', 'anúncio': 'anuncio', 'erro': 'error',
+  'reclamação': 'reclamación', 'denúncia': 'denuncia', 'resolvido': 'resuelto',
+  'vamos verificar': 'vamos a verificar', 'em breve': 'en breve', 'obrigado!': '¡gracias!',
+}
+function glossly(text, dict) {
+  let t = String(text || '')
+  for (const [a, b] of Object.entries(dict)) {
+    let i = t.toLowerCase().indexOf(a)
+    while (i !== -1) {
+      t = t.slice(0, i) + b + t.slice(i + a.length)
+      i = t.toLowerCase().indexOf(a, i + b.length)
+    }
+  }
+  return t
+}
+/** Texto do usuário → PT-BR para a caixa (básico no demo). */
+export function toPTBR(text, fromLang) {
+  return fromLang === 'es' ? glossly(text, ES_PT) : text
+}
+/** Resposta do fundador (PT) → idioma do usuário (básico no demo). */
+export function toUserLang(text, lang) {
+  return lang === 'es' ? glossly(text, PT_ES) : text
+}
+
+/** Encaminha a resposta ao usuário como se fosse a IA (sem identificar o fundador). */
+export function forwardToUser({ threadId, text }) {
+  const list = loadThreads()
+  const th = list.find(t => t.id === threadId)
+  if (!th) return null
+  th.messages.push({ from: 'ai', text: toUserLang(text, th.lang), ts: Date.now() })
+  th.status = 'answered'
+  saveThreads(list)
+  return th
 }

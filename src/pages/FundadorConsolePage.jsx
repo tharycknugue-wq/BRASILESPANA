@@ -2,17 +2,22 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom'
 import {
   ShieldCheck, Inbox, Users, CreditCard, BarChart3, MessagesSquare,
-  Check, X, Send, AlertTriangle, Plus, Trash2, ListChecks,
+  Check, X, Send, AlertTriangle, Plus, Trash2, ListChecks, Instagram,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
-import Footer from '../components/Footer'
+import { SOCIAL, CONTACT } from '../lib/social'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
 import { isFounder, founderInfo, FOUNDERS } from '../lib/founders'
 import {
   moderationQueue, listAll, moderate, effectiveStatus, statusLabel,
 } from '../lib/moderation'
-import { inboxFor, founderReply, loadThreads, loadFounderChat, founderChatSend } from '../lib/support'
+import {
+  inboxFor, founderReply, loadThreads, loadFounderChat, founderChatSend,
+  toPTBR, forwardToUser,
+} from '../lib/support'
+
+const flagOf = (lng) => (lng === 'es' ? '🇪🇸' : '🇧🇷')
 
 const ALLOW_KEY = 'be_invite_allow'
 const loadAllow = () => { try { const a = JSON.parse(localStorage.getItem(ALLOW_KEY) || '[]'); return Array.isArray(a) ? a : [] } catch { return [] } }
@@ -82,7 +87,21 @@ function Frame({ children }) {
     <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
       <PageHeader />
       {children}
-      <Footer />
+      <footer className="mt-auto" style={{ background: '#111827' }}>
+        <div className="max-w-3xl mx-auto px-4 py-6 text-center">
+          <a href={CONTACT.website} target="_blank" rel="noopener noreferrer"
+             className="block text-sm font-bold text-white hover:underline mb-3">
+            www.plataformaconexaobr.com
+          </a>
+          {SOCIAL.instagram && (
+            <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-bold"
+               style={{ background: 'linear-gradient(90deg, #F58529, #DD2A7B, #8134AF)' }}>
+              <Instagram size={16} /> @app.brasilespana
+            </a>
+          )}
+        </div>
+      </footer>
     </div>
   )
 }
@@ -270,6 +289,12 @@ function CaixaEntrada({ lang, me }) {
     setDraft('')
     setThreads(inboxFor(me?.key))
   }
+  const forward = () => {
+    if (!draft.trim() || !current) return
+    forwardToUser({ threadId: current.id, text: draft.trim() })
+    setDraft('')
+    setThreads(inboxFor(me?.key))
+  }
 
   return (
     <Card title={L(`Mensagens direcionadas a ${me?.name} (${me?.area})`, `Mensajes dirigidos a ${me?.name}`)}>
@@ -283,7 +308,7 @@ function CaixaEntrada({ lang, me }) {
                 className="w-full text-left rounded-xl p-3 hover:bg-gray-50 border-2"
                 style={{ borderColor: th.priority ? '#F5C800' : '#F3F4F6' }}>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-sm text-gray-800 truncate">{th.userName}</span>
+                  <span className="font-bold text-sm text-gray-800 truncate">{flagOf(th.lang)} {th.userName}</span>
                   <span className="flex items-center gap-1 flex-shrink-0">
                     {th.priority && (
                       <span className="text-[10px] font-black px-2 py-0.5 rounded-full"
@@ -306,7 +331,15 @@ function CaixaEntrada({ lang, me }) {
           <button onClick={() => setOpenId(null)} className="text-xs font-bold mb-3" style={{ color: '#1A7A2E' }}>
             ← {L('Voltar à lista', 'Volver a la lista')}
           </button>
-          <p className="text-xs text-gray-500 mb-2">{current.userName} · {current.userEmail} · <b>{current.category}</b></p>
+          <p className="text-xs text-gray-500 mb-1">
+            {flagOf(current.lang)} {current.userName} · {current.userEmail} · <b>{current.category}</b>
+          </p>
+          {current.lang === 'es' && (
+            <p className="text-[10px] text-gray-400 mb-2">
+              {L('Usuário escreve em espanhol — exibido traduzido para PT-BR (tradução básica no demo).',
+                 'El usuario escribe en español — mostrado traducido a PT-BR.')}
+            </p>
+          )}
           <div className="space-y-2 max-h-64 overflow-y-auto mb-3 p-3 rounded-xl" style={{ background: '#F4F8FB' }}>
             {current.messages.map((m, i) => (
               <div key={i} className={`text-sm ${m.from === 'founder' ? 'text-right' : ''}`}>
@@ -315,41 +348,148 @@ function CaixaEntrada({ lang, me }) {
                 </span>
                 <span className="inline-block px-3 py-1.5 rounded-2xl mt-0.5"
                   style={{ background: m.from === 'founder' ? '#1A7A2E' : '#FFFFFF', color: m.from === 'founder' ? '#FFF' : '#374151', border: '1px solid #E5E7EB' }}>
-                  {m.text}
+                  {m.from !== 'founder' && current.lang === 'es' ? toPTBR(m.text, current.lang) : m.text}
                 </span>
+                {m.from !== 'founder' && current.lang === 'es' && (
+                  <span className="block text-[10px] text-gray-400 mt-0.5">orig (ES): {m.text}</span>
+                )}
               </div>
             ))}
           </div>
+          <input value={draft} onChange={e => setDraft(e.target.value)}
+            placeholder={L('Escreva em português...', 'Escribe en portugués...')}
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-100 mb-2" />
           <div className="flex gap-2">
-            <input value={draft} onChange={e => setDraft(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); reply() } }}
-              placeholder={L('Responder...', 'Responder...')}
-              className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-100" />
-            <button onClick={reply} className="px-4 rounded-xl text-white" style={{ background: '#1A7A2E' }}><Send size={16} /></button>
+            <button onClick={reply}
+              className="flex-1 px-3 py-2.5 rounded-xl text-sm font-bold border"
+              style={{ borderColor: '#1A7A2E', color: '#1A7A2E' }}>
+              {L('Nota interna', 'Nota interna')}
+            </button>
+            <button onClick={forward}
+              className="flex-1 px-3 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-1.5"
+              style={{ background: '#1A7A2E' }}>
+              <Send size={15} /> {L('Encaminhar ao usuário', 'Enviar al usuario')}
+            </button>
           </div>
+          <p className="text-[10px] text-gray-400 mt-1">
+            {L('"Encaminhar" chega ao usuário como a IA, sem sua identificação' + (current.lang === 'es' ? ', traduzido para espanhol.' : '.'),
+               '"Enviar" llega al usuario como la IA, sin tu identificación.')}
+          </p>
         </div>
       )}
     </Card>
   )
 }
 
-/* ---------- USUÁRIOS ---------- */
+/* ---------- USUÁRIOS (3 sub-abas) ---------- */
 function Usuarios({ lang }) {
   const L = (pt, es) => (lang === 'es' ? es : pt)
+  const [sub, setSub] = useState('parceiros')
+
   let demo = null
   try { demo = JSON.parse(localStorage.getItem('be_demo_user') || 'null') } catch { /* ignore */ }
+  let allow = []
+  try { allow = JSON.parse(localStorage.getItem('be_invite_allow') || '[]') } catch { /* ignore */ }
+  allow = (Array.isArray(allow) ? allow : []).map(e => String(e).toLowerCase())
   const threads = loadThreads()
+
+  const regNo = (email) => {
+    let h = 0
+    for (const c of String(email)) h = (h * 31 + c.charCodeAt(0)) >>> 0
+    return 'BR-' + String(h % 1000000).padStart(6, '0')
+  }
+  const map = {}
+  const add = (email, name) => {
+    if (!email) return
+    const k = String(email).toLowerCase()
+    if (!map[k]) map[k] = { email: k, name: name || k.split('@')[0], date: '—' }
+    else if (name) map[k].name = name
+  }
+  threads.forEach(t => add(t.userEmail, t.userName))
+  if (demo?.email) add(demo.email, demo.user_metadata?.full_name)
+  allow.forEach(e => add(e))
+
+  const demoEmail = (demo?.email || '').toLowerCase()
+  const demoAdv = (demo?.user_metadata?.account_type) === 'advertiser'
+  const classify = (email) =>
+    allow.includes(email) ? 'parceiro'
+      : (email === demoEmail && demoAdv) ? 'pro'
+      : 'free'
+
+  const all = Object.values(map).map(u => ({ ...u, cat: classify(u.email), num: regNo(u.email) }))
+  const parceiros = all.filter(u => u.cat === 'parceiro')
+  const pro = all.filter(u => u.cat === 'pro')
+  const free = all.filter(u => u.cat === 'free')
+
+  const SUBS = [
+    { id: 'parceiros', label: `${L('Parceiros', 'Socios')} (${parceiros.length})` },
+    { id: 'pro',       label: `${L('Pagantes Pro', 'Pagos Pro')} (${pro.length})` },
+    { id: 'free',      label: `Free (${free.length})` },
+  ]
+  const rows = sub === 'parceiros' ? parceiros : sub === 'pro' ? pro : free
+
   return (
     <Card title={L('Usuários', 'Usuarios')}>
-      {demo ? (
-        <div className="text-sm border border-gray-100 rounded-xl p-3 mb-3">
-          <p className="font-bold text-gray-800">{demo.user_metadata?.full_name || demo.email}</p>
-          <p className="text-xs text-gray-500">{demo.email} · {demo.user_metadata?.account_type || 'free'}</p>
+      <div className="flex gap-2 mb-4 flex-wrap">
+        {SUBS.map(s => (
+          <button key={s.id} onClick={() => setSub(s.id)}
+            className="px-3 py-1.5 rounded-full text-xs font-bold"
+            style={{ background: sub === s.id ? '#1A7A2E' : '#FFFFFF', color: sub === s.id ? '#FFF' : '#374151', border: '1px solid #E5E7EB' }}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {sub === 'parceiros' && (
+        <div className="mb-4 p-3 rounded-xl text-xs leading-relaxed"
+             style={{ background: '#FFF7DB', color: '#7B5E00', border: '1px solid #F5C800' }}>
+          <b>{L('Parceiros', 'Socios')}:</b>{' '}
+          {L('recebem o link de divulgação e ganham 2,99 € por usuário indicado — creditado SÓ após a confirmação do pagamento do usuário que entrou pelo link. O valor a receber é avisado por notificação no smartphone do parceiro.',
+             'reciben el enlace y ganan 2,99 € por usuario referido — acreditado SOLO tras la confirmación del pago del usuario que entró por el enlace. El importe se avisa por notificación en el smartphone del socio.')}
         </div>
-      ) : <Empty text={L('Nenhuma conta neste navegador.', 'Ninguna cuenta en este navegador.')} />}
-      <p className="text-xs text-gray-400 mt-2">
-        {L('Demo: mostra a conta deste navegador + quem abriu suporte ('+threads.length+'). A lista completa de usuários exige o Supabase conectado.',
-           'Demo: muestra la cuenta de este navegador + quien abrió soporte. La lista completa requiere Supabase conectado.')}
+      )}
+
+      {rows.length === 0 ? (
+        <Empty text={L('Ninguém nesta categoria ainda.', 'Nadie en esta categoría aún.')} />
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-[11px] uppercase text-gray-400">
+                <th className="py-2 pr-3">{L('Nome', 'Nombre')}</th>
+                <th className="py-2 pr-3">{L('Inscrição', 'Registro')}</th>
+                <th className="py-2 pr-3">Nº</th>
+                <th className="py-2 pr-3">E-mail</th>
+                <th className="py-2">{L('Plano/Categoria', 'Plan/Categoría')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(u => (
+                <tr key={u.email} className="border-t border-gray-100">
+                  <td className="py-2 pr-3 font-semibold text-gray-800">{u.name}</td>
+                  <td className="py-2 pr-3 text-gray-500">{u.date}</td>
+                  <td className="py-2 pr-3 text-gray-500">{u.num}</td>
+                  <td className="py-2 pr-3 text-gray-600 break-all">{u.email}</td>
+                  <td className="py-2">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                      style={u.cat === 'parceiro'
+                        ? { background: '#F5C800', color: '#3a2a00' }
+                        : u.cat === 'pro'
+                          ? { background: '#FFFDE7', color: '#7B5E00', border: '1px solid #F5C800' }
+                          : { background: '#E8F5E9', color: '#1A7A2E' }}>
+                      {u.cat === 'parceiro' ? L('Parceiro', 'Socio') : u.cat === 'pro' ? 'Pro' : 'Free'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <p className="text-xs text-gray-400 mt-4">
+        {L('Demo: lista montada a partir de contas/suporte deste navegador. A base completa (com data e número de inscrição reais) aparece com o Supabase conectado.',
+           'Demo: lista de cuentas/soporte de este navegador. La base completa aparece con Supabase conectado.')}
       </p>
     </Card>
   )

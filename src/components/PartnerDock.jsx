@@ -3,7 +3,7 @@ import { Users, X, Send, Star } from 'lucide-react'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
 import { isFounder, FOUNDERS } from '../lib/founders'
-import { touchPresence, onlineKeys, loadPair, sendPair, isPartnerEmail } from '../lib/support'
+import { touchPresence, onlineKeys, loadPair, sendPair, isPartnerEmail, markRead, convPair } from '../lib/support'
 
 const PEERS = Object.values(FOUNDERS).filter(f => f.key !== 'geral')
 const ACCENT = '#F5C800'      // amarelo padrão do app
@@ -39,6 +39,12 @@ export default function PartnerDock() {
 
   useEffect(() => {
     windows.forEach(p => endRefs.current[p]?.scrollIntoView({ behavior: 'smooth' }))
+  })
+
+  // Marca como lido p/ o fundador ver "parceiro visualizou"
+  // (o parceiro NÃO vê confirmação de leitura — sem indicador aqui)
+  useEffect(() => {
+    windows.forEach(k => markRead(convPair(email, k), email))
   })
 
   if (!partner) return null

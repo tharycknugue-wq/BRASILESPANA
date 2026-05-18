@@ -92,17 +92,18 @@ export default function SupportChat() {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: '#F4F8FB' }}>
             <Bubble who={t.ai} side="left" text={partner ? t.greetPartner : t.greet} />
-            {(thread?.messages || []).map((m, i) => (
-              <Bubble
-                key={i}
-                who={m.from === 'user' ? t.you : m.from === 'ai' ? t.ai : t.founder}
-                side={m.from === 'user' ? 'right' : 'left'}
-                text={m.text}
-                accent={m.from === 'founder'}
-                selfBg={accent}
-                selfColor={onAccent}
-              />
-            ))}
+            {(thread?.messages || [])
+              .filter(m => m.from !== 'founder')   /* fundador é interno; usuário só vê a IA */
+              .map((m, i) => (
+                <Bubble
+                  key={i}
+                  who={m.from === 'user' ? t.you : t.ai}
+                  side={m.from === 'user' ? 'right' : 'left'}
+                  text={m.text}
+                  selfBg={accent}
+                  selfColor={onAccent}
+                />
+              ))}
             <div ref={endRef} />
           </div>
 
