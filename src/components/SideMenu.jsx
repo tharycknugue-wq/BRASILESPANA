@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   X, ChevronDown, Info, PlayCircle, MessageSquare,
-  Share2, FileText, LayoutDashboard, Megaphone, LogOut,
+  Share2, FileText, LayoutDashboard, Megaphone, LogIn, UserPlus, LogOut,
   Instagram, Facebook, Music2, Youtube, MessageCircle, Send, UserCircle, Download,
 } from 'lucide-react'
 import { useLang } from '../lib/lang'
@@ -170,6 +170,23 @@ export default function SideMenu({ open, onClose }) {
             <button onClick={handleSignOut}
               className="flex items-center gap-1.5 text-sm font-black text-red-600 hover:text-red-700 flex-shrink-0">
               <LogOut size={16} /> {t.signout}
+            </button>
+          </div>
+        )}
+
+        {/* Conta — visível logo no topo (deslogado) */}
+        {!user && (
+          <div className="px-5 py-3 border-b border-gray-100 flex gap-2"
+               style={{ background: '#F0FAF1' }}>
+            <button onClick={() => go('/entrar')}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold text-white"
+              style={{ background: '#1A7A2E' }}>
+              <LogIn size={15} /> {t.login}
+            </button>
+            <button onClick={() => go('/cadastro')}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold border"
+              style={{ borderColor: '#1A7A2E', color: '#1A7A2E' }}>
+              <UserPlus size={15} /> {t.register}
             </button>
           </div>
         )}
