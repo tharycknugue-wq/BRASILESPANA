@@ -60,19 +60,10 @@ export default function FundadorConsolePage() {
           </p>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
-          {TABS.map(tb => {
-            const Icon = tb.icon
-            const active = tab === tb.id
-            return (
-              <button key={tb.id} onClick={() => setTab(tb.id)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors"
-                style={{ background: active ? '#1A7A2E' : '#FFFFFF', color: active ? '#FFFFFF' : '#374151', border: '1px solid #E5E7EB' }}>
-                <Icon size={15} /> {L(tb.pt, tb.es)}
-              </button>
-            )
-          })}
-        </div>
+        <p className="text-xs font-black uppercase tracking-wide mb-5" style={{ color: '#1A7A2E' }}>
+          {L(TABS.find(x => x.id === tab)?.pt || '', TABS.find(x => x.id === tab)?.es || '')}
+          <span className="text-gray-400 font-medium normal-case"> · {L('use o menu ☰ para navegar', 'usa el menú ☰ para navegar')}</span>
+        </p>
 
         {tab === 'tasks'   && <Tarefas lang={lang} me={me} onGo={setTab} key={'t' + tick} />}
         {tab === 'mod'     && <Moderacao lang={lang} me={me} onChange={refresh} key={'m' + tick} />}

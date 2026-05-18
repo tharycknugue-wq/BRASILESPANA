@@ -127,3 +127,39 @@ export function founderChatSend({ founderKey, name, text }) {
   try { localStorage.setItem(FCHAT_KEY, JSON.stringify(list)) } catch { /* ignore */ }
   return list
 }
+
+/* ---- Presença + chat 1:1 entre fundadores (estilo MSN) ---- */
+const PRESENCE_KEY = 'be_presence'
+const PAIRS_KEY    = 'be_fchat_pairs'
+
+export function touchPresence(key) {
+  if (!key) return
+  let m = {}
+  try { m = JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}') } catch { /* ignore */ }
+  m[key] = Date.now()
+  try { localStorage.setItem(PRESENCE_KEY, JSON.stringify(m)) } catch { /* ignore */ }
+}
+
+export function onlineKeys() {
+  let m = {}
+  try { m = JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}') } catch { /* ignore */ }
+  const now = Date.now()
+  return Object.keys(m).filter(k => now - m[k] < 20000)
+}
+
+function pairId(a, b) { return [a, b].sort().join('__') }
+
+export function loadPair(a, b) {
+  let all = {}
+  try { all = JSON.parse(localStorage.getItem(PAIRS_KEY) || '{}') } catch { /* ignore */ }
+  return all[pairId(a, b)] || []
+}
+
+export function sendPair(a, b, fromKey, fromName, text) {
+  let all = {}
+  try { all = JSON.parse(localStorage.getItem(PAIRS_KEY) || '{}') } catch { /* ignore */ }
+  const id = pairId(a, b)
+  all[id] = [...(all[id] || []), { from: fromKey, name: fromName, text, ts: Date.now() }]
+  try { localStorage.setItem(PAIRS_KEY, JSON.stringify(all)) } catch { /* ignore */ }
+  return all[id]
+}

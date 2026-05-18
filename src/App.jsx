@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import SupportChat from './components/SupportChat'
+import FounderDock from './components/FounderDock'
 import Home from './pages/Home'
 import ListingsPage from './pages/ListingsPage'
 import AnuncioDetalhePage from './pages/AnuncioDetalhePage'
@@ -51,6 +52,7 @@ export default function App() {
       <Route path="*"                   element={<NotFoundPage />} />
     </Routes>
     <SupportChat />
+    <FounderDock />
     </>
   )
 }
