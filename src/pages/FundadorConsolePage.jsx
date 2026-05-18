@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom'
 import {
   ShieldCheck, Inbox, Users, CreditCard, BarChart3, MessagesSquare,
-  Check, X, Send, AlertTriangle, Plus, Trash2,
+  Check, X, Send, AlertTriangle, Plus, Trash2, ListChecks,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
@@ -19,6 +19,7 @@ const loadAllow = () => { try { const a = JSON.parse(localStorage.getItem(ALLOW_
 const saveAllow = (l) => { try { localStorage.setItem(ALLOW_KEY, JSON.stringify(l)) } catch { /* ignore */ } }
 
 const TABS = [
+  { id: 'tasks',   icon: ListChecks,      pt: 'Tarefas',    es: 'Tareas' },
   { id: 'mod',     icon: ShieldCheck,     pt: 'Moderação',  es: 'Moderación' },
   { id: 'inbox',   icon: Inbox,           pt: 'Caixa',      es: 'Bandeja' },
   { id: 'users',   icon: Users,           pt: 'Usuários',   es: 'Usuarios' },
@@ -32,7 +33,7 @@ export default function FundadorConsolePage() {
   const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [tab, setTab] = useState(location.state?.tab || 'mod')
+  const [tab, setTab] = useState(location.state?.tab || 'tasks')
   const [tick, setTick] = useState(0)            // força refresh dos stores
   const refresh = () => setTick(x => x + 1)
 
@@ -73,6 +74,7 @@ export default function FundadorConsolePage() {
           })}
         </div>
 
+        {tab === 'tasks'   && <Tarefas lang={lang} me={me} onGo={setTab} key={'t' + tick} />}
         {tab === 'mod'     && <Moderacao lang={lang} me={me} onChange={refresh} key={'m' + tick} />}
         {tab === 'inbox'   && <CaixaEntrada lang={lang} me={me} key={'i' + tick} />}
         {tab === 'users'   && <Usuarios lang={lang} />}
@@ -90,6 +92,97 @@ function Frame({ children }) {
       <PageHeader />
       {children}
       <Footer />
+    </div>
+  )
+}
+
+/* ---------- TELA INICIAL: TAREFAS DO FUNDADOR ---------- */
+function Tarefas({ lang, me, onGo }) {
+  const L = (pt, es) => (lang === 'es' ? es : pt)
+  const key = me?.key || 'geral'
+
+  const threads = inboxFor(key)
+  const pendingT = threads.filter(t => t.status === 'open')
+  const doneT = threads.filter(t => t.status === 'answered').length
+
+  const showMod = key === 'michele' || key === 'geral'
+  const queue = showMod ? moderationQueue() : []
+  const doneMod = showMod
+    ? listAll().filter(a => a.status === 'approved' || a.status === 'rejected').length
+    : 0
+
+  const tasks = [
+    {
+      id: 'sup', go: 'inbox',
+      title: L(`Atender suporte — ${me?.area}`, `Atender soporte — ${me?.area}`),
+      desc:  L('Mensagens de usuários direcionadas a você (não respondidas)',
+               'Mensajes de usuarios dirigidos a ti (sin responder)'),
+      count: pendingT.length,
+    },
+    ...(showMod ? [{
+      id: 'mod', go: 'mod',
+      title: L('Moderar anúncios na fila', 'Moderar anuncios en cola'),
+      desc:  L('Anúncios com alerta da pré-checagem aguardando decisão',
+               'Anuncios con alerta esperando decisión'),
+      count: queue.length,
+    }] : []),
+  ]
+
+  const totalPending = tasks.reduce((n, t) => n + t.count, 0)
+  const totalDone = doneT + doneMod
+
+  return (
+    <div className="space-y-4">
+      <Card title={L(`Suas tarefas — ${me?.name}`, `Tus tareas — ${me?.name}`)}>
+        <p className="text-xs text-gray-500 -mt-3 mb-4">{me?.area}</p>
+
+        {totalPending === 0 ? (
+          <div className="text-center py-10">
+            <div className="text-4xl mb-2">✅</div>
+            <p className="font-black text-gray-800">
+              {L('Tudo em dia! Nenhuma tarefa pendente.', '¡Todo al día! Sin tareas pendientes.')}
+            </p>
+          </div>
+        ) : (
+          <ul className="space-y-3">
+            {tasks.map(tk => {
+              const done = tk.count === 0
+              return (
+                <li key={tk.id}>
+                  <button onClick={() => onGo(tk.go)}
+                    className="w-full text-left flex items-center gap-3 rounded-2xl p-4 border transition-colors"
+                    style={{ borderColor: done ? '#E5E7EB' : '#1A7A2E', background: done ? '#FFFFFF' : '#F0FAF1' }}>
+                    <span className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-white flex-shrink-0 text-lg"
+                          style={{ background: done ? '#9CA3AF' : '#1A7A2E' }}>
+                      {tk.count}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-bold text-gray-800 text-sm">{tk.title}</span>
+                      <span className="block text-xs text-gray-500">{tk.desc}</span>
+                    </span>
+                    {done
+                      ? <span className="flex items-center gap-1 text-xs font-bold flex-shrink-0" style={{ color: '#1A7A2E' }}><Check size={14} /> {L('Concluído', 'Hecho')}</span>
+                      : <span className="text-xs font-bold text-gray-500 flex-shrink-0">{L('Resolver →', 'Resolver →')}</span>}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </Card>
+
+      <Card title={L('Progresso', 'Progreso')}>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl p-4 text-center" style={{ background: '#FFF7DB' }}>
+            <div className="text-2xl font-black" style={{ color: '#7B5E00' }}>{totalPending}</div>
+            <div className="text-[11px] text-gray-600">{L('Pendentes', 'Pendientes')}</div>
+          </div>
+          <div className="rounded-2xl p-4 text-center" style={{ background: '#E8F5E9' }}>
+            <div className="text-2xl font-black" style={{ color: '#1A7A2E' }}>{totalDone}</div>
+            <div className="text-[11px] text-gray-600">{L('Concluídas', 'Completadas')}</div>
+          </div>
+        </div>
+      </Card>
     </div>
   )
 }

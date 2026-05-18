@@ -11,6 +11,7 @@ import { useAuth } from '../lib/auth'
 import { isFounder, founderInfo } from '../lib/founders'
 
 const FOUNDER_NAV = [
+  { tab: 'tasks',   Icon: LayoutDashboard, pt: 'Início (tarefas)',  es: 'Inicio (tareas)' },
   { tab: 'mod',     Icon: ShieldCheck,    pt: 'Moderação',          es: 'Moderación' },
   { tab: 'inbox',   Icon: Inbox,          pt: 'Caixa (meu setor)',  es: 'Bandeja (mi sector)' },
   { tab: 'users',   Icon: Users,          pt: 'Usuários',           es: 'Usuarios' },
