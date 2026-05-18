@@ -385,6 +385,7 @@ function CaixaEntrada({ lang, me }) {
 function Usuarios({ lang }) {
   const L = (pt, es) => (lang === 'es' ? es : pt)
   const [sub, setSub] = useState('parceiros')
+  const [q, setQ] = useState('')
 
   let demo = null
   try { demo = JSON.parse(localStorage.getItem('be_demo_user') || 'null') } catch { /* ignore */ }
@@ -426,7 +427,11 @@ function Usuarios({ lang }) {
     { id: 'pro',       label: `${L('Pagantes Pro', 'Pagos Pro')} (${pro.length})` },
     { id: 'free',      label: `Free (${free.length})` },
   ]
-  const rows = sub === 'parceiros' ? parceiros : sub === 'pro' ? pro : free
+  const rows0 = sub === 'parceiros' ? parceiros : sub === 'pro' ? pro : free
+  const ql = q.trim().toLowerCase()
+  const rows = ql
+    ? rows0.filter(u => `${u.name} ${u.email} ${u.num}`.toLowerCase().includes(ql))
+    : rows0
 
   return (
     <Card title={L('Usuários', 'Usuarios')}>
@@ -449,8 +454,17 @@ function Usuarios({ lang }) {
         </div>
       )}
 
+      <input
+        value={q}
+        onChange={e => setQ(e.target.value)}
+        placeholder={L('Buscar por nome, e-mail ou nº...', 'Buscar por nombre, e-mail o nº...')}
+        className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-green-100"
+      />
+
       {rows.length === 0 ? (
-        <Empty text={L('Ninguém nesta categoria ainda.', 'Nadie en esta categoría aún.')} />
+        <Empty text={ql
+          ? L('Nenhum resultado para a busca.', 'Sin resultados para la búsqueda.')
+          : L('Ninguém nesta categoria ainda.', 'Nadie en esta categoría aún.')} />
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
