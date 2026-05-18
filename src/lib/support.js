@@ -177,3 +177,19 @@ export function sendPair(a, b, fromKey, fromName, text) {
   try { localStorage.setItem(PAIRS_KEY, JSON.stringify(all)) } catch { /* ignore */ }
   return all[id]
 }
+
+/** Parceiros (e-mails) que têm conversa 1:1 com um fundador, ou online. */
+export function pairPartnersFor(founderKey) {
+  let all = {}
+  try { all = JSON.parse(localStorage.getItem(PAIRS_KEY) || '{}') } catch { /* ignore */ }
+  const set = new Set()
+  Object.keys(all).forEach(id => {
+    const parts = id.split('__')
+    if (parts.length === 2 && parts.includes(founderKey)) {
+      const other = parts[0] === founderKey ? parts[1] : parts[0]
+      if (other.includes('@')) set.add(other)
+    }
+  })
+  onlineKeys().forEach(k => { if (k.includes('@')) set.add(k) })
+  return [...set]
+}

@@ -51,7 +51,8 @@ export default function SupportChat() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [thread, open])
 
-  if (!user || isFounder(user)) return null
+  // Parceiro usa o PartnerDock (amarelo, direto com os fundadores)
+  if (!user || isFounder(user) || partner) return null
 
   const send = () => {
     const text = draft.trim()

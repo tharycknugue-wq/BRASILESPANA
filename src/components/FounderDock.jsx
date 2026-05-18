@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Users, X, Send } from 'lucide-react'
+import { Users, X, Send, Star } from 'lucide-react'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
 import { isFounder, founderInfo, FOUNDERS } from '../lib/founders'
-import { touchPresence, onlineKeys, loadPair, sendPair } from '../lib/support'
+import { touchPresence, onlineKeys, loadPair, sendPair, pairPartnersFor } from '../lib/support'
 
 const PEERS = Object.values(FOUNDERS).filter(f => f.key !== 'geral')
 
@@ -15,22 +15,25 @@ export default function FounderDock() {
   const myKey = me?.key
 
   const [online, setOnline] = useState([])
+  const [partners, setPartners] = useState([])
   const [listOpen, setListOpen] = useState(false)
-  const [windows, setWindows] = useState([])      // chaves de pares abertos
+  const [windows, setWindows] = useState([])
   const [drafts, setDrafts] = useState({})
   const [, force] = useState(0)
   const endRefs = useRef({})
 
-  // Heartbeat de presença + atualização de quem está online
   useEffect(() => {
     if (!founder) return
-    const beat = () => { touchPresence(myKey); setOnline(onlineKeys()) }
+    const beat = () => {
+      touchPresence(myKey)
+      setOnline(onlineKeys())
+      setPartners(pairPartnersFor(myKey))
+    }
     beat()
     const id = setInterval(beat, 6000)
     return () => clearInterval(id)
   }, [founder, myKey])
 
-  // Atualiza as mensagens das janelas abertas
   useEffect(() => {
     if (!windows.length) return
     const id = setInterval(() => force(x => x + 1), 2500)
@@ -45,6 +48,8 @@ export default function FounderDock() {
 
   const L = (pt, es) => (lang === 'es' ? es : pt)
   const isOnline = (k) => k === myKey || online.includes(k)
+  const isPartner = (k) => String(k).includes('@')
+  const nameOf = (k) => FOUNDERS[k]?.name || k
 
   const openWin = (k) => {
     setListOpen(false)
@@ -59,55 +64,86 @@ export default function FounderDock() {
     force(x => x + 1)
   }
 
+  const Row = ({ k, name, sub, accent }) => {
+    const on = isOnline(k)
+    return (
+      <button onClick={() => openWin(k)}
+        className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50">
+        <span className="relative w-9 h-9 rounded-full flex items-center justify-center font-black text-white flex-shrink-0"
+              style={{ background: accent }}>
+          {String(name).charAt(0).toUpperCase()}
+          <span className="absolute -bottom-0 -right-0 w-3 h-3 rounded-full border-2 border-white"
+                style={{ background: on ? '#22C55E' : '#9CA3AF' }} />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-sm font-bold text-gray-800 truncate">{name}</span>
+          <span className="block text-[11px] text-gray-500 truncate">
+            {on ? L('online', 'en línea') : L('offline', 'desconectado')} · {sub}
+          </span>
+        </span>
+      </button>
+    )
+  }
+
   return (
     <>
-      {/* Aba lateral — lista de fundadores (estilo MSN) */}
-      <button
-        onClick={() => setListOpen(o => !o)}
-        className="fixed right-0 top-24 z-[93] flex items-center gap-1.5 px-2 py-3 rounded-l-xl text-white text-xs font-black shadow-lg"
-        style={{ background: '#1A7A2E', writingMode: 'vertical-rl' }}
-        aria-label="Fundadores"
-      >
-        <Users size={15} style={{ transform: 'rotate(90deg)' }} />
-        {L('FUNDADORES', 'FUNDADORES')}
-      </button>
+      {!listOpen && (
+        <button
+          onClick={() => setListOpen(true)}
+          className="fixed right-0 top-24 z-[93] flex items-center gap-1.5 px-2 py-3 rounded-l-xl text-white text-xs font-black shadow-lg"
+          style={{ background: '#1A7A2E', writingMode: 'vertical-rl' }}
+          aria-label="Fundadores"
+        >
+          <Users size={15} style={{ transform: 'rotate(90deg)' }} />
+          {L('FUNDADORES', 'FUNDADORES')}
+        </button>
+      )}
 
       {listOpen && (
-        <div className="fixed right-3 top-24 z-[93] w-60 bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[70vh] overflow-y-auto">
+        <div className="fixed right-3 top-24 z-[94] w-64 bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[70vh] overflow-y-auto">
           <div className="flex items-center justify-between px-4 py-3 text-white" style={{ background: '#1A7A2E' }}>
             <span className="font-black text-sm flex items-center gap-2"><Users size={16} /> {L('Fundadores', 'Fundadores')}</span>
             <button onClick={() => setListOpen(false)} aria-label="X" className="text-white/90 hover:text-white"><X size={18} /></button>
           </div>
+
           <ul className="py-1">
             {PEERS.map(f => {
               const self = f.key === myKey
-              const on = isOnline(f.key)
-              return (
-                <li key={f.key}>
-                  <button
-                    disabled={self}
-                    onClick={() => !self && openWin(f.key)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left ${self ? 'opacity-60 cursor-default' : 'hover:bg-green-50'}`}
-                  >
-                    <span className="relative w-9 h-9 rounded-full flex items-center justify-center font-black text-white flex-shrink-0"
-                          style={{ background: '#1A7A2E' }}>
-                      {f.name.charAt(0)}
-                      <span className="absolute -bottom-0 -right-0 w-3 h-3 rounded-full border-2 border-white"
-                            style={{ background: on ? '#22C55E' : '#9CA3AF' }} />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold text-gray-800 truncate">
-                        {f.name}{self ? L(' (você)', ' (tú)') : ''}
-                      </span>
-                      <span className="block text-[11px] text-gray-500">
-                        {on ? L('online', 'en línea') : L('offline', 'desconectado')} · {f.area}
-                      </span>
-                    </span>
-                  </button>
+              return self ? (
+                <li key={f.key} className="flex items-center gap-3 px-4 py-2.5 opacity-60">
+                  <span className="relative w-9 h-9 rounded-full flex items-center justify-center font-black text-white"
+                        style={{ background: '#1A7A2E' }}>
+                    {f.name.charAt(0)}
+                    <span className="absolute -bottom-0 -right-0 w-3 h-3 rounded-full border-2 border-white" style={{ background: '#22C55E' }} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold text-gray-800 truncate">{f.name}{L(' (você)', ' (tú)')}</span>
+                    <span className="block text-[11px] text-gray-500">{f.area}</span>
+                  </span>
                 </li>
+              ) : (
+                <li key={f.key}><Row k={f.key} name={f.name} sub={f.area} accent="#1A7A2E" /></li>
               )
             })}
           </ul>
+
+          {/* Parceiros — prioridade máxima (amarelo) */}
+          <div className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wide flex items-center gap-1"
+               style={{ background: '#FFF7DB', color: '#7B5E00' }}>
+            <Star size={11} fill="#F5C800" /> {L('Parceiros · prioridade', 'Socios · prioridad')}
+          </div>
+          {partners.length === 0 ? (
+            <p className="px-4 py-3 text-[11px] text-gray-400">
+              {L('Nenhum parceiro conversando.', 'Ningún socio conversando.')}
+            </p>
+          ) : (
+            <ul className="py-1">
+              {partners.map(em => (
+                <li key={em}><Row k={em} name={em} sub={L('Parceiro', 'Socio')} accent="#F5C800" /></li>
+              ))}
+            </ul>
+          )}
+
           <p className="px-4 py-2 text-[10px] text-gray-400 border-t border-gray-100">
             {L('Demo: online vale neste navegador. Com servidor, presença real.',
                'Demo: en línea vale en este navegador. Con servidor, presencia real.')}
@@ -115,27 +151,26 @@ export default function FounderDock() {
         </div>
       )}
 
-      {/* Janelas de conversa 1:1 — quadradinhos no canto inferior */}
       {windows.map((k, i) => {
-        const f = FOUNDERS[k]
+        const partner = isPartner(k)
+        const headBg = partner ? '#F5C800' : '#1A7A2E'
+        const headFg = partner ? '#3a2a00' : '#FFFFFF'
         const msgs = loadPair(myKey, k)
         const on = isOnline(k)
         return (
           <div key={k}
             className="fixed z-[92] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
             style={{ bottom: 0, right: 16 + i * 272, width: 256, height: 360 }}>
-            <div className="flex items-center justify-between px-3 py-2 text-white" style={{ background: '#1A7A2E' }}>
+            <div className="flex items-center justify-between px-3 py-2" style={{ background: headBg, color: headFg }}>
               <span className="flex items-center gap-1.5 font-bold text-sm truncate">
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: on ? '#22C55E' : '#9CA3AF' }} />
-                {f?.name}
+                {partner && <Star size={12} />} {nameOf(k)}
               </span>
-              <button onClick={() => closeWin(k)} aria-label="X" className="text-white/90 hover:text-white"><X size={16} /></button>
+              <button onClick={() => closeWin(k)} aria-label="X" className="opacity-80 hover:opacity-100"><X size={16} /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2" style={{ background: '#F4F8FB' }}>
               {msgs.length === 0 && (
-                <p className="text-xs text-gray-400 text-center mt-4">
-                  {L('Comece a conversa.', 'Empieza la conversación.')}
-                </p>
+                <p className="text-xs text-gray-400 text-center mt-4">{L('Comece a conversa.', 'Empieza la conversación.')}</p>
               )}
               {msgs.map((m, idx) => {
                 const mine = m.from === myKey
@@ -158,7 +193,7 @@ export default function FounderDock() {
                 placeholder={L('Mensagem...', 'Mensaje...')}
                 className="flex-1 min-w-0 px-2.5 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-100"
               />
-              <button onClick={() => send(k)} className="px-2.5 rounded-lg text-white" style={{ background: '#1A7A2E' }}>
+              <button onClick={() => send(k)} className="px-2.5 rounded-lg" style={{ background: headBg, color: headFg }}>
                 <Send size={15} />
               </button>
             </div>

@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import SupportChat from './components/SupportChat'
 import FounderDock from './components/FounderDock'
+import PartnerDock from './components/PartnerDock'
 import Home from './pages/Home'
 import ListingsPage from './pages/ListingsPage'
 import AnuncioDetalhePage from './pages/AnuncioDetalhePage'
@@ -53,6 +54,7 @@ export default function App() {
     </Routes>
     <SupportChat />
     <FounderDock />
+    <PartnerDock />
     </>
   )
 }
