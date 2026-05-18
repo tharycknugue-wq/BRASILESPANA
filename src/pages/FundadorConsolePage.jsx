@@ -388,6 +388,7 @@ function Usuarios({ lang }) {
   const L = (pt, es) => (lang === 'es' ? es : pt)
   const [sub, setSub] = useState('parceiros')
   const [q, setQ] = useState('')
+  const [showSug, setShowSug] = useState(false)
 
   let demo = null
   try { demo = JSON.parse(localStorage.getItem('be_demo_user') || 'null') } catch { /* ignore */ }
@@ -435,6 +436,18 @@ function Usuarios({ lang }) {
     ? rows0.filter(u => `${u.name} ${u.email} ${u.num}`.toLowerCase().includes(ql))
     : rows0
 
+  const rankOf = (u) => {
+    const n = u.name.toLowerCase(), e = u.email.toLowerCase(), nu = u.num.toLowerCase()
+    if (n.startsWith(ql)) return 0
+    if (n.includes(ql)) return 1
+    if (e.includes(ql)) return 2
+    if (nu.includes(ql)) return 3
+    return 9
+  }
+  const suggestions = ql
+    ? rows0.filter(u => rankOf(u) < 9).sort((a, b) => rankOf(a) - rankOf(b)).slice(0, 6)
+    : []
+
   return (
     <Card title={L('Usuários', 'Usuarios')}>
       <div className="flex gap-2 mb-4 flex-wrap">
@@ -456,12 +469,40 @@ function Usuarios({ lang }) {
         </div>
       )}
 
-      <input
-        value={q}
-        onChange={e => setQ(e.target.value)}
-        placeholder={L('Buscar por nome, e-mail ou nº...', 'Buscar por nombre, e-mail o nº...')}
-        className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-green-100"
-      />
+      <div className="relative mb-4">
+        <input
+          value={q}
+          onChange={e => { setQ(e.target.value); setShowSug(true) }}
+          onFocus={() => setShowSug(true)}
+          onBlur={() => setTimeout(() => setShowSug(false), 150)}
+          placeholder={L('Buscar por nome, e-mail ou nº...', 'Buscar por nombre, e-mail o nº...')}
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-100"
+        />
+        {showSug && suggestions.length > 0 && (
+          <ul className="absolute z-20 left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 max-h-60 overflow-y-auto">
+            {suggestions.map(u => (
+              <li key={u.email}>
+                <button
+                  onMouseDown={() => { setQ(u.email); setShowSug(false) }}
+                  className="w-full text-left px-3 py-2 hover:bg-green-50 flex items-center justify-between gap-2">
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold text-gray-800 truncate">{u.name}</span>
+                    <span className="block text-[11px] text-gray-500 truncate">{u.email} · {u.num}</span>
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={u.cat === 'parceiro'
+                      ? { background: '#F5C800', color: '#3a2a00' }
+                      : u.cat === 'pro'
+                        ? { background: '#FFFDE7', color: '#7B5E00' }
+                        : { background: '#E8F5E9', color: '#1A7A2E' }}>
+                    {u.cat === 'parceiro' ? L('Parceiro', 'Socio') : u.cat === 'pro' ? 'Pro' : 'Free'}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {rows.length === 0 ? (
         <Empty text={ql
