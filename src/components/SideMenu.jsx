@@ -162,6 +162,18 @@ export default function SideMenu({ open, onClose }) {
           </button>
         </div>
 
+        {/* Conta — visível logo no topo (logado) */}
+        {user && (
+          <div className="flex items-center justify-between gap-2 px-5 py-3 border-b border-gray-100"
+               style={{ background: '#F0FAF1' }}>
+            <span className="text-xs text-gray-600 truncate min-w-0">{user.email}</span>
+            <button onClick={handleSignOut}
+              className="flex items-center gap-1.5 text-sm font-black text-red-600 hover:text-red-700 flex-shrink-0">
+              <LogOut size={16} /> {t.signout}
+            </button>
+          </div>
+        )}
+
         <Group icon={Info} label={t.about}>
           {t.aboutSub.map(subBtn)}
         </Group>
