@@ -68,11 +68,22 @@ export function getUserThread(email) {
   return loadThreads().find(th => th.userEmail === email) || null
 }
 
+/** Parceiro = e-mail liberado para o link de indicação (prioridade máxima). */
+export function isPartnerEmail(email) {
+  if (!email) return false
+  try {
+    const a = JSON.parse(localStorage.getItem('be_invite_allow') || '[]')
+    return Array.isArray(a) &&
+      a.map(x => String(x).trim().toLowerCase()).includes(String(email).trim().toLowerCase())
+  } catch { return false }
+}
+
 /** Usuário envia mensagem → classifica, roteia e persiste. Retorna a thread. */
 export function userSend({ email, name, lang, text }) {
   const list = loadThreads()
   let th = list.find(t => t.userEmail === email)
   const { key, category } = classifySupport(text)
+  const partner = isPartnerEmail(email)
   const now = Date.now()
   if (!th) {
     th = { id: 'th_' + now, userEmail: email, userName: name || email, lang: lang || 'pt',
@@ -81,6 +92,7 @@ export function userSend({ email, name, lang, text }) {
   }
   th.assignedTo = key
   th.category = category
+  th.priority = partner
   th.status = 'open'
   th.messages.push({ from: 'user', text, ts: now })
   th.messages.push({
@@ -105,11 +117,13 @@ export function founderReply({ threadId, founderKey, text }) {
   return th
 }
 
-/** Caixa de entrada de um fundador: threads atribuídas a ele + 'geral'. */
+/** Caixa de um fundador: threads dele + 'geral'. Parceiro (prioridade) primeiro. */
 export function inboxFor(founderKey) {
   const list = loadThreads()
-  if (founderKey === 'geral') return list
-  return list.filter(th => th.assignedTo === founderKey || th.assignedTo === 'geral')
+  const base = (founderKey === 'geral')
+    ? list
+    : list.filter(th => th.assignedTo === founderKey || th.assignedTo === 'geral')
+  return base.slice().sort((a, b) => (b.priority ? 1 : 0) - (a.priority ? 1 : 0))
 }
 
 function labelOf(key) {

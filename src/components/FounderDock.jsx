@@ -64,7 +64,7 @@ export default function FounderDock() {
       {/* Aba lateral — lista de fundadores (estilo MSN) */}
       <button
         onClick={() => setListOpen(o => !o)}
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-[90] flex items-center gap-1.5 px-2 py-3 rounded-l-xl text-white text-xs font-black shadow-lg"
+        className="fixed right-0 top-24 z-[93] flex items-center gap-1.5 px-2 py-3 rounded-l-xl text-white text-xs font-black shadow-lg"
         style={{ background: '#1A7A2E', writingMode: 'vertical-rl' }}
         aria-label="Fundadores"
       >
@@ -73,7 +73,7 @@ export default function FounderDock() {
       </button>
 
       {listOpen && (
-        <div className="fixed right-3 top-1/2 -translate-y-1/2 z-[91] w-60 bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="fixed right-3 top-24 z-[93] w-60 bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[70vh] overflow-y-auto">
           <div className="flex items-center justify-between px-4 py-3 text-white" style={{ background: '#1A7A2E' }}>
             <span className="font-black text-sm flex items-center gap-2"><Users size={16} /> {L('Fundadores', 'Fundadores')}</span>
             <button onClick={() => setListOpen(false)} aria-label="X" className="text-white/90 hover:text-white"><X size={18} /></button>

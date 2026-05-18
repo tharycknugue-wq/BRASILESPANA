@@ -280,10 +280,19 @@ function CaixaEntrada({ lang, me }) {
           {threads.map(th => (
             <li key={th.id}>
               <button onClick={() => setOpenId(th.id)}
-                className="w-full text-left border border-gray-100 rounded-xl p-3 hover:bg-gray-50">
-                <div className="flex items-center justify-between">
+                className="w-full text-left rounded-xl p-3 hover:bg-gray-50 border-2"
+                style={{ borderColor: th.priority ? '#F5C800' : '#F3F4F6' }}>
+                <div className="flex items-center justify-between gap-2">
                   <span className="font-bold text-sm text-gray-800 truncate">{th.userName}</span>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: '#E8F5E9', color: '#1A7A2E' }}>{th.category}</span>
+                  <span className="flex items-center gap-1 flex-shrink-0">
+                    {th.priority && (
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full"
+                            style={{ background: '#F5C800', color: '#3a2a00' }}>
+                        ★ {lang === 'es' ? 'PRIORIDAD' : 'PRIORIDADE'}
+                      </span>
+                    )}
+                    <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: '#E8F5E9', color: '#1A7A2E' }}>{th.category}</span>
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 truncate mt-0.5">
                   {th.messages[th.messages.length - 1]?.text}
