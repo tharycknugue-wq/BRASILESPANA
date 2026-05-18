@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Search, MapPin, Clock, Star, X } from 'lucide-react'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { useLang } from '../lib/lang'
 
@@ -89,8 +89,8 @@ export default function ListingsPage() {
   })
 
   return (
-    <div className="min-h-screen flex flex-col bg-brand-blue">
-      <Header />
+    <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+      <PageHeader />
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
         {/* Back + Category Header */}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload, CheckCircle, AlertTriangle } from 'lucide-react'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { useLang } from '../lib/lang'
 import { useAuth } from '../lib/auth'
@@ -184,8 +184,8 @@ export default function NewAdPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex flex-col bg-brand-blue">
-        <Header />
+      <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+        <PageHeader />
         <main className="flex-1 flex items-center justify-center px-4">
           <div className="text-center max-w-sm">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce"
@@ -205,8 +205,8 @@ export default function NewAdPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-brand-blue">
-      <Header />
+    <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+      <PageHeader />
 
       <main className="flex-1 max-w-xl mx-auto w-full px-4 py-8">
         {/* Back */}

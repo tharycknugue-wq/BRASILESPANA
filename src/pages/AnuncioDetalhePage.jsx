@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, MapPin, Clock, MessageCircle, Mail, Phone, Share2, Flag, Star } from 'lucide-react'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import { useLang } from '../lib/lang'
 import { supabase } from '../lib/supabase'
@@ -95,8 +95,8 @@ export default function AnuncioDetalhePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-brand-blue">
-        <Header />
+      <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+        <PageHeader />
         <main className="flex-1 flex items-center justify-center">
           <div className="flex items-center gap-2 text-gray-500">
             <span className="w-4 h-4 border-2 border-gray-300 border-t-brand-green rounded-full animate-spin" />
@@ -110,8 +110,8 @@ export default function AnuncioDetalhePage() {
 
   if (notFound || !ad) {
     return (
-      <div className="min-h-screen flex flex-col bg-brand-blue">
-        <Header />
+      <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+        <PageHeader />
         <main className="flex-1 flex items-center justify-center px-4">
           <div className="text-center max-w-sm">
             <div className="text-6xl mb-4">🔍</div>
@@ -135,8 +135,8 @@ export default function AnuncioDetalhePage() {
   const emailHref = ad.contact && ad.contact.includes('@') ? `mailto:${ad.contact}` : null
 
   return (
-    <div className="min-h-screen flex flex-col bg-brand-blue">
-      <Header />
+    <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+      <PageHeader />
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-6">
         <button

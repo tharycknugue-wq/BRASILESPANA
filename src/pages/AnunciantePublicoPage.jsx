@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   Store, Star, MapPin, Wallet, Truck, Tag, Share2, MessageSquare, Send, AlertCircle,
 } from 'lucide-react'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import Footer from '../components/Footer'
 import DigitalCardModal from '../components/DigitalCardModal'
 import { useLang } from '../lib/lang'
@@ -167,8 +167,8 @@ export default function AnunciantePublicoPage() {
   }
 
   const Shell = ({ children }) => (
-    <div className="min-h-screen flex flex-col bg-brand-blue">
-      <Header />
+    <div className="min-h-screen flex flex-col" style={{ background: '#EBF5FB' }}>
+      <PageHeader />
       {children}
       <Footer />
     </div>
