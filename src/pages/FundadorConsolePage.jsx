@@ -18,6 +18,7 @@ import {
 } from '../lib/support'
 
 const flagOf = (lng) => (lng === 'es' ? '🇪🇸' : '🇧🇷')
+const BUILD = typeof __BUILD_TIME__ !== 'undefined' ? __BUILD_TIME__ : 'dev'
 
 const ALLOW_KEY = 'be_invite_allow'
 const loadAllow = () => { try { const a = JSON.parse(localStorage.getItem(ALLOW_KEY) || '[]'); return Array.isArray(a) ? a : [] } catch { return [] } }
@@ -100,6 +101,7 @@ function Frame({ children }) {
               <Instagram size={16} /> @app.brasilespana
             </a>
           )}
+          <p className="text-[10px] text-gray-500 mt-3">build: {BUILD}</p>
         </div>
       </footer>
     </div>
