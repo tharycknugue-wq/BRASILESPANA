@@ -1,6 +1,6 @@
 /* BRASILESPANA service worker — cache-first com fallback de rede.
    Cache mínimo do shell para suportar instalação PWA e abertura offline. */
-const VERSION = 'brasilespana-v1'
+const VERSION = 'brasilespana-v3'
 const SHELL = [
   '/',
   '/favicon.svg',
@@ -38,17 +38,15 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Assets: cache-first
+  // Assets: NETWORK-FIRST — online sempre pega a versão nova;
+  // cache serve apenas como reserva quando offline.
   event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached
-      return fetch(request).then(res => {
-        if (res.ok && res.type === 'basic') {
-          const copy = res.clone()
-          caches.open(VERSION).then(cache => cache.put(request, copy))
-        }
-        return res
-      }).catch(() => cached)
-    })
+    fetch(request).then(res => {
+      if (res.ok && res.type === 'basic') {
+        const copy = res.clone()
+        caches.open(VERSION).then(cache => cache.put(request, copy))
+      }
+      return res
+    }).catch(() => caches.match(request))
   )
 })
